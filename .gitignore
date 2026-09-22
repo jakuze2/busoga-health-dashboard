@@ -1,0 +1,12 @@
+.Renviron
+.Rhistory
+.RData
+.Rproj.user/
+*.log
+__pycache__/
+data/worldpop/
+
+# data are kept in the private repository jakuze2/busoga-health-data
+/data/
+/app/data/
+/.private/

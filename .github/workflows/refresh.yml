@@ -1,0 +1,88 @@
+# Automatic data refresh for the Busoga Health Forum dashboard.
+#   weekly  (Mondays 06:00 UTC = 09:00 Kampala): 033B surveillance, epidemic alerts, seasonal outlook
+#   monthly (16th, after the 15th reporting deadline): full monthly refresh + climate + validation
+#   full    (manual only, Run workflow > full): metadata, boundaries, population, open data
+# The data live in the private repository jakuze2/busoga-health-data (folders data/ and app/data/).
+# This repository holds code only.
+# Repository secrets needed (Settings > Secrets and variables > Actions):
+#   HMIS_USER, HMIS_PWD   DHIS2 login
+#   DATA_REPO_TOKEN       fine-grained token with Contents: read and write on busoga-health-data
+# After the data are pushed, app/data_version.txt is updated here so that Posit Connect Cloud
+# republishes (same URL) and the app downloads the new data when it starts.
+name: Refresh dashboard data
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+    - cron: "0 5 16 * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "weekly, monthly or full"
+        default: "monthly"
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+env:
+  DATA_REPO: jakuze2/busoga-health-data
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      HMIS_USER: ${{ secrets.HMIS_USER }}
+      HMIS_PWD: ${{ secrets.HMIS_PWD }}
+      MODE: ${{ github.event.inputs.mode || (github.event.schedule == '0 6 * * 1' && 'weekly' || 'monthly') }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check out the private data
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.DATA_REPO }}
+          token: ${{ secrets.DATA_REPO_TOKEN }}
+          path: .private
+      - name: Put the data in place
+        run: |
+          cp -a .private/data ./data
+          mkdir -p app && cp -a .private/app/data ./app/data
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: any::httr2, any::jsonlite, any::data.table, any::sf, any::terra, any::readxl
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests shapely
+      - name: Write credentials
+        run: printf 'HMIS_USER=%s\nHMIS_PWD=%s\n' "$HMIS_USER" "$HMIS_PWD" > .Renviron
+      - name: Refresh
+        run: Rscript run_refresh.R --$MODE
+      - name: Push the refreshed data to the private repository
+        run: |
+          rm -f .Renviron
+          rsync -a --delete --exclude worldpop/ data/ .private/data/
+          rsync -a --delete app/data/ .private/app/data/
+          cd .private
+          git config user.name "bhf-data-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A data app/data
+          if git diff --cached --quiet; then
+            echo "CHANGED=false" >> "$GITHUB_ENV"
+          else
+            git commit -q -m "Data refresh ($MODE) $(date -u +%Y-%m-%d)"
+            git push
+            echo "CHANGED=true" >> "$GITHUB_ENV"
+          fi
+      - name: Republish the dashboard
+        if: env.CHANGED == 'true'
+        run: |
+          printf 'Data refreshed %s (%s)\n' "$(date -u +%Y-%m-%dT%H:%MZ)" "$MODE" > app/data_version.txt
+          git config user.name "bhf-data-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add app/data_version.txt
+          git commit -q -m "Data refresh ($MODE) $(date -u +%Y-%m-%d)"
+          git push
