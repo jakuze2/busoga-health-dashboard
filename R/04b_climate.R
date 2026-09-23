@@ -19,8 +19,20 @@ suppressPackageStartupMessages({ library(terra); library(sf) })
 ou <- fread("data/meta/orgunits.csv", na.strings = "")
 
 # ---- CHIRPS zonal means --------------------------------------------------------------------
-r <- rast("data/climate/chirps_busoga_monthly.nc")
-t_idx <- as.integer(floor(as.numeric(sub(".*T=", "", names(r)))))           # months since Jan 1960
+chirps_file <- "data/climate/chirps_busoga_monthly.nc"
+r <- rast(chirps_file)
+# Months since 1960 for each layer. Older terra versions put them in the layer names ("...T=252.5");
+# newer ones name layers "precipitation_1" etc., so read the NetCDF time axis instead.
+chirps_months <- function(r, file) {
+  nm <- names(r)
+  if (all(grepl("T=", nm))) return(as.numeric(sub(".*T=", "", nm)))
+  d <- trimws(terra::describe(file, options = ""))
+  stopifnot("CHIRPS time axis is not in months since 1960" = any(grepl("^T#units=months since 1960", d)))
+  v <- grep("^NETCDF_DIM_T_VALUES=", d, value = TRUE)[1]
+  as.numeric(strsplit(gsub("[{} ]", "", sub("^NETCDF_DIM_T_VALUES=", "", v)), ",")[[1]])
+}
+t_idx <- as.integer(floor(chirps_months(r, chirps_file)))
+stopifnot("CHIRPS layers and time axis differ" = length(t_idx) == nlyr(r), !anyNA(t_idx))
 periods <- (1960L + t_idx %/% 12L) * 100L + (t_idx %% 12L + 1L)
 zonal <- function(lvl) {
   g <- st_read(sprintf("app/data/geo/%s.geojson", lvl), quiet = TRUE)
