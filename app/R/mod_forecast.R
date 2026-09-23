@@ -47,7 +47,7 @@ forecast_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Forecast", "What the next months are likely to look like",
-              "Seasonal time-series models project any indicator for any area, with 80% and 95% prediction intervals. The back-test shows how accurate the model has been on the last 12 months, so you can judge how much to trust it."),
+              "Seasonal time-series models project any indicator for any area, with 80% and 95% prediction intervals. The back-test shows how accurate the model has been on the last 12 months, so you can judge how much to trust it.", key = "forecast"),
     filter_bar(
       selectInput(ns("ind"), "Indicator", indicator_choices(), selected = "MAL09", width = "320px"),
       area_ui(ns("area"), depth = 4),

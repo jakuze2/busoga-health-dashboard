@@ -5,7 +5,7 @@ download_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Download", "Download district-level data",
-              "Aggregated to district / city and Busoga totals only. The file contains no facility, sub-county or DLG rows, so no individual facility is linked to any figure."),
+              "Aggregated to district / city and Busoga totals only. The file contains no facility, sub-county or DLG rows, so no individual facility is linked to any figure.", key = "download"),
     layout_columns(col_widths = c(4, 8),
       card(card_header("Choose what to export"),
            selectInput(ns("themes"), "Programme themes", THEMES$theme, selected = THEMES$theme, multiple = TRUE),

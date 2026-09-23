@@ -4,7 +4,7 @@ breakdown_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Breakdowns", "Who delivers the services, and to whom",
-              "Split any indicator by facility ownership, level or authority inside any area, and see age and sex breakdowns for the main service counts."),
+              "Split any indicator by facility ownership, level or authority inside any area, and see age and sex breakdowns for the main service counts.", key = "breakdown"),
     navset_card_underline(full_screen = TRUE,
       nav_panel("By facility group",
         filter_bar(selectInput(ns("ind"), "Indicator", indicator_choices(facility = TRUE), selected = "DEL01", width = "320px"),

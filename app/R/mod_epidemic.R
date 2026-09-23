@@ -16,7 +16,7 @@ epidemic_ui <- function(id) {
   dz <- unique(EPI[, .(disease, kind)])[order(kind == "notifiable", disease)]
   tagList(
     page_head("Early warning", "Epidemic alerts and predictions",
-              "Weekly surveillance (HMIS 033B). Endemic diseases are compared with their normal channel, the usual level for the same weeks in previous years (WHO method). For immediately notifiable diseases any case is an alert. Predictions look four weeks ahead."),
+              "Weekly surveillance (HMIS 033B). Endemic diseases are compared with their normal channel, the usual level for the same weeks in previous years (WHO method). For immediately notifiable diseases any case is an alert. Predictions look four weeks ahead.", key = "epidemic"),
     filter_bar(
       selectInput(ns("disease"), "Disease", split(dz$disease, ifelse(dz$kind == "seasonal", "Endemic / seasonal", "Immediately notifiable")),
                   selected = "Malaria (confirmed)", width = "290px"),

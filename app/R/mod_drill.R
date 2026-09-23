@@ -4,7 +4,7 @@ drill_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Cascade drill-down", "From Busoga down to every facility",
-              "Start at Busoga. Click a row (or an area on the map) to go one level down; use the breadcrumb to go back up. The treemap shows the whole cascade at once."),
+              "Start at Busoga. Click a row (or an area on the map) to go one level down; use the breadcrumb to go back up. The treemap shows the whole cascade at once.", key = "drill"),
     filter_bar(
       selectInput(ns("theme"), "Programme theme", THEMES$theme, width = "260px"),
       period_ui(ns("period")),

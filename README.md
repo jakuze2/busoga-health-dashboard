@@ -43,12 +43,14 @@ Busoga Health Forum/
     02_indicators.R          resolves the indicator catalogue against live DHIS2 definitions
     03_extract.R             monthly data elements x facility x month x category combo
     03b_extract_weekly.R     weekly 033B surveillance x facility x week
+    03c_extract_supplies.R   medicines days out of stock, supervision and meetings (HMIS 105:06-09)
     04_compute.R             DHIS2-consistent indicator values at every level
     04b_climate.R            climate indicators per sub-county / district
     05_quality.R             data quality and age/sex breakdowns
     05b_epidemic.R           normal channels, alerts, 4-week predictions
     06_validate.R            compares our values with DHIS2's own indicator results
     07_app_data.R            final app files
+    08b_context.R            census 2024 (UBOS) by district and sub-county, World Bank and WHO national figures
     09_explain.R             models and SHAP values for the AI insights page
   scripts/                   Python helpers (OpenStreetMap layers, Open-Meteo climate)
   data/                      pipeline data (not in this repository, see "Where the data live")

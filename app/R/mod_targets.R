@@ -5,7 +5,7 @@ targets_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Analyse", "Performance against targets",
-              "Every indicator that has a Uganda national target (or, where there is none, a global target) compared with that target, for the selected area and period, and for each district and city."),
+              "Every indicator that has a Uganda national target (or, where there is none, a global target) compared with that target, for the selected area and period, and for each district and city.", key = "targets"),
     filter_bar(area_ui(ns("area")), period_ui(ns("period")),
                checkboxInput(ns("only_below"), "Only indicators below target", FALSE)),
     uiOutput(ns("summary")),

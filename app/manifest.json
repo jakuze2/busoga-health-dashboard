@@ -2628,82 +2628,82 @@
       "checksum": "55773d1bb34dc19673942f8eefafa318"
     },
     "R/00_utils.R": {
-      "checksum": "b859d35a9d40156ed73aa1f084ca0b21"
+      "checksum": "0e8e55d9db3aa62b280781c4e848492b"
     },
     "R/01_inputs.R": {
-      "checksum": "9cf510c97f6d18b1b4f1073220c97eb2"
+      "checksum": "7832ae2e080d4e858281fa03c7f39e5f"
     },
     "R/mod_about.R": {
-      "checksum": "720c0023db65932b7510053fec10829b"
+      "checksum": "5a27afe4e3875525bd3a7a20b5098e6d"
     },
     "R/mod_atlas.R": {
-      "checksum": "559647d1d3916214dc796277b87aeeca"
+      "checksum": "dc2181c4cc03b322f26ed247ba88b21a"
     },
     "R/mod_breakdown.R": {
-      "checksum": "003cbba9ba42c6ce87a4d5fbaac83e64"
+      "checksum": "e19800ad9bfefa9be6680fc420e12655"
     },
     "R/mod_brief.R": {
-      "checksum": "869e7fb14daa5ffda2fc55dc2b23e06f"
+      "checksum": "970a21553e1f447170bf23bcf1e88cf4"
     },
     "R/mod_climate.R": {
-      "checksum": "774aac58e0a57c5a1e2f534ff88bebd0"
+      "checksum": "dacb1336d53f708f3f48db7f5c51f8ef"
     },
     "R/mod_compare.R": {
-      "checksum": "5a7fbbf9306d6e5accc7216b8c7e7ada"
+      "checksum": "cdb8403a053be0f56b3906796a1fb190"
     },
     "R/mod_deepdive.R": {
-      "checksum": "5c5cffbd888afd313b07ae6e458de707"
+      "checksum": "d38b2d103403792a00ea0f84618cdf52"
     },
     "R/mod_definitions.R": {
-      "checksum": "aa5c9cf27914d4798f67673936a27769"
+      "checksum": "d08d71633b73d91db5941eb173f62c22"
     },
     "R/mod_download.R": {
-      "checksum": "e626245f5d6ba2e8a9d11eeae64cee0f"
+      "checksum": "047e0d3a520544a4ccf9eb57704f2732"
     },
     "R/mod_dq.R": {
-      "checksum": "9e0901cac4522b51d948108b3139c826"
+      "checksum": "09d0452d4a978b321bbc516e19555e02"
     },
     "R/mod_drill.R": {
-      "checksum": "18db9ce482fb65b0785ebb234d923a69"
+      "checksum": "9d4b3290aca36b87f45ebcc916770f62"
     },
     "R/mod_epidemic.R": {
-      "checksum": "16616ae25b215d4c3ee2a268cf007b3d"
+      "checksum": "f8f00031f7641da2f02659a31dda8f8a"
     },
     "R/mod_explorer.R": {
-      "checksum": "88d9f07a348df1aefe27e54fdb3b104a"
+      "checksum": "f51e496c77640a0b2e35c07224fe5ee0"
     },
     "R/mod_facilities.R": {
-      "checksum": "53cb45d8c0a6aa4056850aadb623548c"
+      "checksum": "4b28faf9ccf2c7e8cbf2af8fb5843763"
     },
     "R/mod_forecast.R": {
-      "checksum": "61e141200ab82f37ab792e2cf45ad8d1"
+      "checksum": "19af7d587cb734c03ebcdec2b4602b39"
     },
     "R/mod_info.R": {
-      "checksum": "7e109b777c70325a55d32e28d700f8f3"
+      "checksum": "db03ded530e98122566907a9d9a5ca0f"
     },
     "R/mod_maps.R": {
-      "checksum": "742f7950ea73f66e9e13b8cd61901091"
+      "checksum": "2f33cf2077c340ae41887a6fde88c7cc"
     },
     "R/mod_overview.R": {
-      "checksum": "4701659146ff5b2a1b033a8748ef03af"
+      "checksum": "8fccb1654f3e17851157fb2266d094ad"
     },
     "R/mod_population.R": {
-      "checksum": "bbf97653bc86497be841d2e12c13216c"
+      "checksum": "f36038675fc24152dd20132a0ecf6124"
     },
     "R/mod_region.R": {
-      "checksum": "9732f7b13779acf8aef8920c7c945f20"
+      "checksum": "278f611dd55cc68523f22b7fcf20d748"
     },
     "R/mod_scorecard.R": {
-      "checksum": "d539c631ecf49acecb44a2d01caa6998"
+      "checksum": "114f977d13dc13e0e707c71d03768284"
     },
     "R/mod_targets.R": {
-      "checksum": "26a4dc328bf74568cf7c1d4dc50426d9"
+      "checksum": "10ddc86e380eae576b6a7d9ffb7e5326"
     },
     "app.R": {
-      "checksum": "9ec606d427569f15936ebc3021bf4287"
+      "checksum": "455fca73d5eccce1a1598948b2a575d3"
     },
     "data_version.txt": {
-      "checksum": "be7b56637702815cef9d5cc605d75dfb"
+      "checksum": "5a42f3408d49d7a48342725fcbf11440"
     },
     "targets.csv": {
       "checksum": "5be6ea827fe0726bf1161ddc2f55f20b"
@@ -2727,16 +2727,157 @@
       "checksum": "1b01c7cd9fb375bd1fb395b3dfd31450"
     },
     "www/styles.css": {
-      "checksum": "cb123d74b926ad33849037e0eb1b663d"
+      "checksum": "6259ac6fe1f119aeb799a97695a7e485"
     },
     "R/mod_xai.R": {
-      "checksum": "96fbe68a910cec470965e767ebdf6f75"
+      "checksum": "c11214adf714b83b739d123a0732ad8b"
     },
     "brief_reference.docx": {
       "checksum": "87a6a3acf4e60687473661733577ece1"
     },
     "R/02_pdf_protect.R": {
       "checksum": "e7f4605f19d93b0aed232c1501101bbd"
+    },
+    "R/mod_blocks.R": {
+      "checksum": "18fdf1d30a21f9eb79d154e25e3f4ed0"
+    },
+    "R/mod_spatial.R": {
+      "checksum": "8561de22c54621a70abc5f0c7cac8c84"
+    },
+    "R/mod_story.R": {
+      "checksum": "2ff2decde88b3f68743f9ab3a357a678"
+    },
+    "R/pop_projection.R": {
+      "checksum": "13d83b8a2af2a8f8adeededf6f8fa57a"
+    },
+    "R/zz_page_status.R": {
+      "checksum": "287e0052823e9a7123811e5363f561bf"
+    },
+    "R/zz_tile_modals.R": {
+      "checksum": "693fbe69259f83ead68ec01190a40d28"
+    },
+    "www/bhf-story.js": {
+      "checksum": "20ec1fc4e102822d957a830479fd424f"
+    },
+    "www/banner/banner_01.jpg": {
+      "checksum": "aa8ac81cae84ec7323d8f8edc9873dea"
+    },
+    "www/banner/banner_02.jpg": {
+      "checksum": "0ecc175d271ddc7ee5042264ac9a8cd2"
+    },
+    "www/banner/banner_03.jpg": {
+      "checksum": "e6a393c6c7dec3f4baa9a09989fa84aa"
+    },
+    "www/banner/banner_04.jpg": {
+      "checksum": "f5808953e9bd1101ea53b8a6833e7988"
+    },
+    "www/banner/banner_05.jpg": {
+      "checksum": "f8f0b0c4ae4c2053776b8a22197eaf4d"
+    },
+    "www/banner/banner_06.jpg": {
+      "checksum": "d864e9ba46b4d7d09da4f23a9813a4e7"
+    },
+    "www/banner/banner_07.jpg": {
+      "checksum": "b756552c567477185f9e143ba949afbb"
+    },
+    "www/banner/banner_08.jpg": {
+      "checksum": "86e4cff9ed43b33fa26353830e2e4726"
+    },
+    "www/banner/banner_09.jpg": {
+      "checksum": "c0b65a4a5129073f2ac502da7c3b7f00"
+    },
+    "www/banner/banner_10.jpg": {
+      "checksum": "243d319bf3aa3d7e907d80d8acb5bac0"
+    },
+    "www/banner/banner_11.jpg": {
+      "checksum": "7de089f4a0673948f7eca59ae701f862"
+    },
+    "www/banner/banner_12.jpg": {
+      "checksum": "23a7a3dd62294d7072c516b5825ccbf1"
+    },
+    "www/banner/banner_13.jpg": {
+      "checksum": "29bc76cf63b4b172609762175b50454c"
+    },
+    "www/banner/banner_14.jpg": {
+      "checksum": "1d9ce15c6b8effbdadc54c0d242d30fa"
+    },
+    "www/banner/banner_15.jpg": {
+      "checksum": "7e7a215c55a6d86f7e46a571b2ac264a"
+    },
+    "www/banner/banner_16.jpg": {
+      "checksum": "1bc7d1298c99f223acbb5a255efce0c8"
+    },
+    "www/banner/banner_17.jpg": {
+      "checksum": "a571ef2c8cf77b0895806e8ba1c1a02d"
+    },
+    "www/banner/banner_18.jpg": {
+      "checksum": "38c6a30c7e183778f40eac9958352f58"
+    },
+    "www/banner/banner_19.jpg": {
+      "checksum": "8b423e32f018e050278792c76375b9da"
+    },
+    "www/banner/banner_20.jpg": {
+      "checksum": "a4968ccfb0adab41bfcdac3fca2c6f6d"
+    },
+    "www/banner/banner_21.jpg": {
+      "checksum": "1eebe6edb558ba8e56f1fcef25ea0bdc"
+    },
+    "www/banner/banner_22.jpg": {
+      "checksum": "ba4286729cf3f397679a486121b32a68"
+    },
+    "www/banner/banner_23.jpg": {
+      "checksum": "e592f26d03945c8a005bb4cbd3e21984"
+    },
+    "www/banner/banner_24.jpg": {
+      "checksum": "358c01de6ae346e1f3c3816b08ed957d"
+    },
+    "www/banner/banner_25.jpg": {
+      "checksum": "3db693532e1aa3809dc2178e6ea68c21"
+    },
+    "www/banner/banner_26.jpg": {
+      "checksum": "6017279db3bd7fee8404fcd18322ae6b"
+    },
+    "www/banner/banner_27.jpg": {
+      "checksum": "5229b8daf67c9e07c688f69620b66022"
+    },
+    "www/banner/banner_28.jpg": {
+      "checksum": "a6042d775ed07c23467bf4d1018f1f03"
+    },
+    "www/banner/banner_29.jpg": {
+      "checksum": "1e030af10249d564f98305edf5ffd2f8"
+    },
+    "www/banner/banner_30.jpg": {
+      "checksum": "6fbc10a6e9f746de9e100fcb675a89b5"
+    },
+    "www/banner/banner_31.jpg": {
+      "checksum": "667d29bbf802666cc9dad3addb2b5eef"
+    },
+    "www/banner/banner_32.jpg": {
+      "checksum": "e019a637d50a7d64e11415f2ad8a6f17"
+    },
+    "www/banner/banner_33.jpg": {
+      "checksum": "f0315b3ad612a28bded2968cd75df365"
+    },
+    "www/banner/banner_34.jpg": {
+      "checksum": "101443f83fddfa809a9767932db8d0f5"
+    },
+    "www/banner/banner_35.jpg": {
+      "checksum": "4243142ba0df33f947ab7e07ace9e3bd"
+    },
+    "www/banner/banner_36.jpg": {
+      "checksum": "5ca31fd4ef6f1775e7a52704f02ec385"
+    },
+    "www/banner/banner_37.jpg": {
+      "checksum": "deb45629898bb9ee282ff1a6a01e0823"
+    },
+    "www/banner/banner_38.jpg": {
+      "checksum": "02d702a84fed871ba9777fae524c5f64"
+    },
+    "www/banner/banner_39.jpg": {
+      "checksum": "c6552e94bf7b2a173671cfb834155c00"
+    },
+    "www/banner/credits.csv": {
+      "checksum": "cd697ea404f8ac54222196aec8c3799e"
     }
   },
   "users": null

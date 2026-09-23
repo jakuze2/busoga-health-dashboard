@@ -39,7 +39,7 @@ population_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Population & education", "Who lives in Busoga, and where the schools are",
-              "Age and sex structure for every area, official UBOS district population, and every school by level with its distance to the nearest health facility."),
+              "Age and sex structure for every area, official UBOS district population, and every school by level with its distance to the nearest health facility.", key = "population"),
     filter_bar(area_ui(ns("area"), depth = 3)),
     navset_card_underline(full_screen = TRUE,
       nav_panel("Population pyramid",

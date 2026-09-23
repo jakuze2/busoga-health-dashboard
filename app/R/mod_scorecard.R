@@ -4,7 +4,7 @@ scorecard_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Scorecards", "Performance scorecard",
-              "Every district, DLG, sub-county or facility against every indicator, rated against the Busoga-wide value for the same period. No external targets are invented: the reference is Busoga itself."),
+              "Every district, DLG, sub-county or facility against every indicator, rated against the Busoga-wide value for the same period. No external targets are invented: the reference is Busoga itself.", key = "scorecard"),
     filter_bar(
       selectInput(ns("level"), "Compare", c("Districts / cities" = "district", "DLGs / municipalities" = "dlg",
                                             "Sub-counties / divisions" = "subcounty", "Health facilities" = "facility"),

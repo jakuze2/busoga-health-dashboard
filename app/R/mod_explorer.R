@@ -5,7 +5,7 @@ explorer_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Analyse", "Indicator explorer",
-              "Bundle up to 10 indicators and compare them across any level, from single facilities to Busoga, or across facility ownership, level and authority. Opened from an Overview tile, it starts with that indicator and area."),
+              "Bundle up to 10 indicators and compare them across any level, from single facilities to Busoga, or across facility ownership, level and authority. Opened from an Overview tile, it starts with that indicator and area.", key = "explorer"),
     filter_bar(
       selectizeInput(ns("codes"), "Indicators (up to 10)", indicator_choices(), selected = c("ANC03", "DEL01"), multiple = TRUE,
                      width = "460px", options = list(maxItems = 10, plugins = list("remove_button"))),

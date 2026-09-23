@@ -33,7 +33,7 @@ overview_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Busoga Health Forum · Dashboard", "Busoga at a glance",
-              "Routine health data (HMIS/DHIS2) for every health facility in the 12 districts and cities of Busoga, alongside open datasets on population (UBOS, WorldPop), climate (CHIRPS, ERA5-Land, CAMS, ECMWF) and places (OpenStreetMap). Pick an area and period; every figure updates, and every tile opens for deeper analysis."),
+              "Routine health data (HMIS/DHIS2) for every health facility in the 12 districts and cities of Busoga, alongside open datasets on population (UBOS, WorldPop), climate (CHIRPS, ERA5-Land, CAMS, ECMWF) and places (OpenStreetMap). Pick an area and period; every figure updates, and every tile opens for deeper analysis.", banner = TRUE, key = "overview"),
     filter_bar(area_ui(ns("area")), period_ui(ns("period"))),
     uiOutput(ns("hero")),
     uiOutput(ns("asrh")),
@@ -55,15 +55,18 @@ overview_server <- function(id) moduleServer(id, function(input, output, session
     active <- uniqueN(r[actual > 0, uid])
     popv <- POP[uid == a$uid & year == p$to %/% 100L, pop]
     val <- function(cd) { s <- summarise_ind(cd, a$level, p$from, p$to, uids = a$uid); if (nrow(s)) s$value else NA }
-    tile <- function(lab, v, sub) div(div(class = "h-lab", lab), div(class = "h-val", v), div(class = "h-sub", sub))
+    ns <- session$ns
+    tile <- function(lab, v, sub, js) tags$a(href = "#", class = "hero-link", title = "Tap to enlarge", onclick = js,
+                                             div(class = "h-lab", lab, span(class = "h-go", EXPAND_ICON)), div(class = "h-val", v), div(class = "h-sub", sub))
+    ex <- function(cd) expand_js(ns("expand"), cd, IND[code == cd, theme])
     div(class = "hero",
       tile(a$name, if (length(popv)) formatC(popv, big.mark = ",", format = "d") else "–",
-           sprintf("projected population %d", p$to %/% 100L)),
-      tile("Health facilities", formatC(nrow(facs), big.mark = ","), sprintf("%s reported in the period", formatC(active, big.mark = ","))),
-      tile("Reporting completeness", if (is.na(compl)) "–" else sprintf("%.0f%%", compl), sprintf("105:01 OPD report, %.0f%% on time", timely)),
-      tile("OPD new attendances", fmt_val(val("SRV01"), "SRV01"), p$label),
-      tile("Deliveries in facilities", fmt_val(val("DEL01"), "DEL01"), p$label),
-      tile("HIV tests performed", fmt_val(val("HIV01"), "HIV01"), p$label))
+           sprintf("projected population %d", p$to %/% 100L), tile_js(ns("tile"), "population")),
+      tile("Health facilities", formatC(nrow(facs), big.mark = ","), sprintf("%s reported in the period", formatC(active, big.mark = ",")), tile_js(ns("tile"), "facilities")),
+      tile("Reporting completeness", if (is.na(compl)) "–" else sprintf("%.0f%%", compl), sprintf("105:01 OPD report, %.0f%% on time", timely), tile_js(ns("tile"), "reporting")),
+      tile("OPD new attendances", fmt_val(val("SRV01"), "SRV01"), p$label, ex("SRV01")),
+      tile("Deliveries in facilities", fmt_val(val("DEL01"), "DEL01"), p$label, ex("DEL01")),
+      tile("HIV tests performed", fmt_val(val("HIV01"), "HIV01"), p$label, ex("HIV01")))
   })
 
   output$themes <- renderUI({
@@ -118,6 +121,7 @@ overview_server <- function(id) moduleServer(id, function(input, output, session
                       "Change pills are green when the indicator moved in the desirable direction. Charts show the last 24 months; the dotted line is Busoga and the dashed red line the target. ",
                       TARGET_NOTE, " ", CAP_NOTE))
   })
+  tile_modal_server(input, output, session)
   observeEvent(input$open, {
     o <- input$open; a <- area(); p <- per()
     codes <- if (!is.null(o$code)) o$code else if (!is.null(o$codes)) unlist(o$codes) else HEADLINE[[o$theme]]
@@ -192,8 +196,7 @@ overview_server <- function(id) moduleServer(id, function(input, output, session
                           rangeselector = list(x = 0, y = 1.12, buttons = list(
                             list(count = 12, label = "12 months", step = "month", stepmode = "backward"),
                             list(count = 24, label = "24 months", step = "month", stepmode = "backward"),
-                            list(step = "all", label = "All years"))),
-                          rangeslider = list(visible = TRUE, thickness = 0.07)),
+                            list(step = "all", label = "All years")))),
              yaxis = list(title = unit_label(cd), gridcolor = BRAND$grid, rangemode = "tozero", tickformat = ",.0f"))
   })
   output$xp_areas <- renderPlotly({

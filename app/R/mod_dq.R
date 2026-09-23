@@ -5,7 +5,7 @@ dq_ui <- function(id) {
   ds <- unlist(META$datasets)
   tagList(
     page_head("Data quality", "How good are the data, and where should we improve?",
-              "Completeness and timeliness of monthly reports (DHIS2 reporting rates), facilities that do not report, internally inconsistent values and extreme outliers. Use 'Where to improve' to target support visits."),
+              "Completeness and timeliness of monthly reports (DHIS2 reporting rates), facilities that do not report, internally inconsistent values and extreme outliers. Use 'Where to improve' to target support visits.", key = "dq"),
     filter_bar(area_ui(ns("area"), depth = 2),
                selectInput(ns("ds"), "Report (dataset)", setNames(names(ds), ds), selected = "RtEYsASU7PG", width = "260px"),
                period_ui(ns("period"))),

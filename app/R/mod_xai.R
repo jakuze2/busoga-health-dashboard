@@ -47,11 +47,11 @@ xai_direction <- function(f, d, O) {
 
 xai_ui <- function(id) {
   ns <- NS(id)
-  if (is.null(XAI)) return(page_head("Insights", "What drives the numbers?", "Results appear after the next monthly data refresh."))
+  if (is.null(XAI)) return(page_head("Insights", "What drives the numbers?", "Results appear after the next monthly data refresh.", key = "xai"))
   outs <- intersect(names(XAI_OUT), names(XAI$outcomes))
   tagList(
     page_head("AI insights · explainable AI", "What drives the numbers?",
-              "A computer model studies five years of monthly data from every sub-county in Busoga to find which things (rain, heat, the time of year, and how complete reporting is) tend to go with rises and falls in key health figures. It is refreshed every month with the latest data, and everything on this page is rewritten from the new results."),
+              "A computer model studies five years of monthly data from every sub-county in Busoga to find which things (rain, heat, the time of year, and how complete reporting is) tend to go with rises and falls in key health figures. It is refreshed every month with the latest data, and everything on this page is rewritten from the new results.", key = "xai"),
     filter_bar(
       selectInput(ns("out"), "Show me", setNames(outs, vapply(XAI_OUT[outs], `[[`, "", "name")), width = "260px"),
       selectInput(ns("area"), "Where", c("All of Busoga" = "Busoga"), width = "200px"),

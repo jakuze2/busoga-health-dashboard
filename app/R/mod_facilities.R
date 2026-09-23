@@ -6,7 +6,7 @@ facilities_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Facilities", "Every health facility, and each facility's own data",
-              "Find a facility by name or filter the list, then click it to open its full data view below: every indicator against its sub-county, district and Busoga, trends, reporting and data quality."),
+              "Find a facility by name or filter the list, then click it to open its full data view below: every indicator against its sub-county, district and Busoga, trends, reporting and data quality.", key = "facilities"),
     filter_bar(
       selectInput(ns("district"), "District / City", c("All" = "", units_at("district")), width = "190px"),
       selectInput(ns("level"), "Facility level", c("All", "Hospital", "HC IV", "HC III", "HC II", "Clinic / other"), width = "150px"),

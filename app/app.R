@@ -20,7 +20,7 @@ ui <- page_navbar(
   theme = bhf_theme, fillable = FALSE,
   navbar_options = navbar_options(position = "static-top", bg = "#ffffff", theme = "light"),
   header = tags$head(tags$link(rel = "stylesheet", href = "styles.css"),
-                     tags$script(src = "html-to-image.min.js"), tags$script(src = "bhf-download.js"),
+                     tags$script(src = "html-to-image.min.js"), tags$script(src = "bhf-download.js"), tags$script(src = "bhf-story.js"),
                      tags$link(rel = "icon", type = "image/png", href = "favicon.png"),
                      tags$meta(name = "viewport", content = "width=device-width, initial-scale=1")),
   footer = tags$footer(class = "site-footer",
@@ -35,6 +35,7 @@ ui <- page_navbar(
   nav_menu(tagList(nav_icon("chart-column"), "Analyse"),
     nav_panel(tagList(nav_icon("magnifying-glass-chart"), "Indicator explorer"), value = "explorer", explorer_ui("explorer")),
     nav_panel(tagList(nav_icon("bullseye"), "Performance against targets"), value = "targets", targets_ui("targets")),
+    nav_panel(tagList(nav_icon("cubes"), "Health system building blocks"), value = "blocks", blocks_ui("blocks")),
     nav_panel(tagList(nav_icon("table-cells"), "Scorecard"), value = "scorecard", scorecard_ui("scorecard")),
     nav_panel(tagList(nav_icon("chart-line"), "Compare & trends"), value = "compare", compare_ui("compare")),
     nav_panel(tagList(nav_icon("sitemap"), "Cascade drill-down"), value = "drill", drill_ui("drill")),
@@ -42,13 +43,15 @@ ui <- page_navbar(
     nav_panel(tagList(nav_icon("layer-group"), "Breakdowns"), value = "breakdown", breakdown_ui("breakdown"))),
   nav_menu(tagList(nav_icon("map"), "Maps"),
     nav_panel(tagList(nav_icon("map-location-dot"), "Indicator maps"), value = "maps", maps_ui("maps")),
-    nav_panel(tagList(nav_icon("earth-africa"), "Atlas of Busoga"), value = "atlas", atlas_ui("atlas"))),
+    nav_panel(tagList(nav_icon("earth-africa"), "Atlas of Busoga"), value = "atlas", atlas_ui("atlas")),
+    nav_panel(tagList(nav_icon("fire"), "Spatial analysis: hot spots and clusters"), value = "spatial", spatial_ui("spatial"))),
   nav_menu(tagList(nav_icon("tower-broadcast"), "Early warning"),
     nav_panel(tagList(nav_icon("virus"), "Epidemic alerts"), value = "epidemic", epidemic_ui("epidemic")),
     nav_panel(tagList(nav_icon("cloud-sun-rain"), "Climate & environment"), value = "climate", climate_ui("climate")),
     nav_panel(tagList(nav_icon("chart-area"), "Forecast"), value = "forecast", forecast_ui("forecast"))),
   nav_panel(tagList(nav_icon("wand-magic-sparkles"), "AI insights"), value = "xai", xai_ui("xai")),
   nav_menu(tagList(nav_icon("map-location-dot"), "Busoga profile"),
+    nav_panel(tagList(nav_icon("star"), "Busoga in focus: people, places and health"), value = "story", story_ui("story")),
     nav_panel(tagList(nav_icon("people-group"), "People: population, age and schools"), value = "population", population_ui("population")),
     nav_panel(tagList(nav_icon("chart-pie"), "Place: census history, access, farming and trade"), value = "region", region_ui("region"))),
   nav_panel(tagList(nav_icon("clipboard-check"), "Data quality"), value = "dq", dq_ui("dq")),
@@ -69,6 +72,7 @@ server <- function(input, output, session) {
   facilities_server("facilities")
   explorer_server("explorer", incoming = session$userData$explore)
   targets_server("targets")
+  blocks_server("blocks")
   brief_server("brief")
   scorecard_server("scorecard")
   compare_server("compare")
@@ -77,6 +81,8 @@ server <- function(input, output, session) {
   breakdown_server("breakdown")
   maps_server("maps")
   atlas_server("atlas")
+  spatial_server("spatial")
+  story_server("story")
   epidemic_server("epidemic")
   climate_server("climate")
   forecast_server("forecast")

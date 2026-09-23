@@ -107,20 +107,59 @@ children_of <- function(uid) {
 }
 
 filter_bar <- function(...) div(class = "filter-bar", ...)
-page_head <- function(eyebrow, title, text = NULL, right = NULL)
-  div(class = "page-head", div(class = "page-head-text", div(class = "eyebrow", eyebrow), h2(title), if (!is.null(text)) p(text)),
-      if (is.null(right)) data_status() else right)
+page_head <- function(eyebrow, title, text = NULL, right = NULL, banner = FALSE, key = NULL) {
+  ids <- banner_ids(key, banner)
+  div(class = paste("page-head", if (length(ids)) "ph-banner", if (length(ids) && !isTRUE(banner)) "ph-compact"),
+      if (length(ids)) banner_slides(ids),
+      div(class = "page-head-text", div(class = "eyebrow", eyebrow), h2(title), if (!is.null(text)) p(text)),
+      if (is.null(right)) data_status(if (!is.null(key)) page_status(key)) else right)
+}
+
+# Photos that slowly cross-fade behind every page header (www/banner; credits.csv gives caption,
+# author and licence, shown on each photo as the licences require). Each page has its own set, so
+# no two pages look alike. Pure CSS, so it costs nothing on the server.
+BANNER <- if (file.exists("www/banner/credits.csv")) read.csv("www/banner/credits.csv", stringsAsFactors = FALSE) else data.frame(file = character())
+BANNER_SETS <- list(
+  overview = 1:10, story = c(20, 28, 5, 26, 18, 38), facilities = c(35, 7, 37), explorer = c(12, 25, 29), targets = c(2, 32, 22),
+  blocks = c(35, 20, 13), scorecard = c(15, 24, 39), compare = c(6, 33, 18), drill = c(17, 30, 21), deep = c(28, 11, 9),
+  breakdown = c(3, 36, 14), maps = c(22, 34, 24), atlas = c(36, 29, 19), spatial = c(27, 32, 16), epidemic = c(39, 37, 7),
+  climate = c(4, 27, 21), forecast = c(38, 23, 10), xai = c(23, 31, 26), population = c(37, 7, 3), region = c(26, 36, 29, 17),
+  dq = c(30, 12, 33), brief = c(9, 1, 34), definitions = c(11, 31, 19), about = c(24, 13, 2), download = c(14, 25, 21))
+banner_ids <- function(key, banner) {
+  if (!nrow(BANNER)) return(integer())
+  ids <- if (!is.null(key) && !is.null(BANNER_SETS[[key]])) BANNER_SETS[[key]] else if (isTRUE(banner)) seq_len(min(10, nrow(BANNER))) else integer()
+  ids[ids <= nrow(BANNER)]
+}
+BANNER_SECS <- 6
+banner_slides <- function(ids) {
+  n <- length(ids); v <- 100 / n
+  # one keyframe set per number of photos: fade in, hold for its share of the cycle, cross-fade out
+  kf <- sprintf(paste0("@keyframes phShow%1$d{0%%{opacity:0}%2$.2f%%{opacity:1}%3$.2f%%{opacity:1}%4$.2f%%{opacity:0}100%%{opacity:0}}",
+                       "@keyframes phZoom%1$d{0%%{transform:scale(1.02)}%4$.2f%%{transform:scale(1.1) translate3d(-1.2%%,-.8%%,0)}100%%{transform:scale(1.1) translate3d(-1.2%%,-.8%%,0)}}"),
+                n, 0.3 * v, v, 1.3 * v)
+  cap <- function(i) {
+    has_c <- nzchar(BANNER$caption[i] %||% ""); has_a <- nzchar(BANNER$author[i] %||% "")
+    if (!has_c && !has_a) return(NULL)
+    div(class = "ph-cap", if (has_c) BANNER$caption[i],
+        if (has_a) span(sprintf("%sPhoto: %s, %s, via Wikimedia Commons", if (has_c) " · " else "", BANNER$author[i], BANNER$licence[i])))
+  }
+  div(class = "ph-slides", `aria-hidden` = "true", style = sprintf("--t:%ds", n * BANNER_SECS), tags$style(HTML(kf)),
+      lapply(seq_along(ids), function(k) { i <- ids[k]
+        div(class = "ph-slide", style = sprintf("--d:%ds; animation-name:phShow%d", (k - 1) * BANNER_SECS, n),
+            div(class = "ph-img", style = sprintf("background-image:url('banner/%s'); animation-name:phZoom%d", BANNER$file[i], n)), cap(i)) }))
+}
 
 # "what data am I looking at" panel shown at the right of every page header
-data_status <- function() {
+data_status <- function(items = NULL) {
   nfac <- nrow(OU[level_name == "facility"]); nd <- nrow(OU[level_name == "district"])
-  item <- function(icon, lab, val) div(class = "ds-item", span(class = "ds-icon", fontawesome::fa(icon, fill = "#201B6D", height = "1em")),
-                                       div(div(class = "ds-lab", lab), div(class = "ds-val", val)))
-  div(class = "data-status",
-      item("calendar-check", "Latest month of data", format(ym_date(MONTH_MAX), "%B %Y")),
-      item("rotate", "Last updated", META$extracted),
-      item("hospital", "Coverage", sprintf("%s facilities, %d districts and cities", format(nfac, big.mark = ","), nd)),
-      item("database", "Source", "Ministry of Health DHIS2 (HMIS)"))
+  if (is.null(items)) items <- list(
+    list(icon = "calendar-check", lab = "Latest month of data", val = format(ym_date(MONTH_MAX), "%B %Y")),
+    list(icon = "rotate", lab = "Last updated", val = META$extracted),
+    list(icon = "hospital", lab = "Coverage", val = sprintf("%s facilities, %d districts and cities", format(nfac, big.mark = ","), nd)),
+    list(icon = "database", lab = "Source", val = "Ministry of Health DHIS2 (HMIS)"))
+  item <- function(x) div(class = "ds-item", span(class = "ds-icon", fontawesome::fa(x$icon, fill = "#201B6D", height = "1em")),
+                          div(div(class = "ds-lab", x$lab), div(class = "ds-val", as.character(x$val))))
+  div(class = "data-status", lapply(items, item))
 }
 
 # Mini area chart for KPI tiles: gradient fill, y-axis min/max labels, first/last month on the

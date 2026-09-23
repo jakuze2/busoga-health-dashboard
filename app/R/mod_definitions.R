@@ -9,7 +9,13 @@ definitions_ui <- function(id) {
   tagList(
     page_head("Reference", "Indicator definitions",
               sprintf("Every measure in the dashboard. The %d health service indicators come first: what each measures, the exact formula with the DHIS2 data elements it uses, and how it looks in Busoga today. Pick a theme or search, then click an indicator. The %d other measures (data quality, epidemic alerts, climate, forecasts, population, education and Busoga in numbers) follow below, grouped by the page they appear on.",
-                      nrow(IND), nrow(OTHER))),
+                      nrow(IND), nrow(OTHER)), key = "definitions"),
+    div(class = "df-themes", lapply(THEMES$theme[THEMES$theme %in% IND$theme], function(th) {
+      n <- IND[theme == th, .N]
+      tags$a(href = "#", class = "df-theme", style = sprintf("--th:%s", theme_col(th)),
+             onclick = sprintf("var r=document.querySelector('input[name=\"%s\"][value=\"%s\"]'); if(r){r.click();} return false;", ns("theme"), th),
+             span(class = "df-theme-icon", fontawesome::fa(theme_icon(th), fill = "#fff", height = "1.05em")),
+             div(div(class = "df-theme-n", th), div(class = "df-theme-c", sprintf("%d indicator%s", n, if (n == 1) "" else "s")))) })),
     layout_sidebar(
       sidebar = sidebar(width = 340, open = "always",
         textInput(ns("q"), NULL, placeholder = "Search indicators, e.g. malaria, ANC, HIV"),

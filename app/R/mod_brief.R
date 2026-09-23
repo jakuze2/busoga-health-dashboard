@@ -493,7 +493,7 @@ brief_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Reports", "Download a brief",
-              "A designed summary of up to three pages for Busoga, any district, DLG, sub-county or single facility, and any period: key facts, key messages, maternal and child mortality, indicators below target, trends and an indicator summary."),
+              "A designed summary of up to three pages for Busoga, any district, DLG, sub-county or single facility, and any period: key facts, key messages, maternal and child mortality, indicators below target, trends and an indicator summary.", key = "brief"),
     filter_bar(area_ui(ns("area"), depth = 4), period_ui(ns("period"))),
     layout_columns(col_widths = c(4, 8),
       card(card_header("Brief settings"),

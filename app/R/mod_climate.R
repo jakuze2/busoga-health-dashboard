@@ -11,7 +11,7 @@ climate_ui <- function(id) {
   cm <- sort(unique(CLIM$period), decreasing = TRUE)
   tagList(
     page_head("Early warning", "Climate & environment",
-              "Rainfall and drought for every sub-county (CHIRPS satellite rainfall, 5 km, since 1981), heat (ERA5-Land) and air pollution (CAMS) by district, and the ECMWF seasonal outlook. Use it alongside the health data: rainfall usually drives malaria one to two months later."),
+              "Rainfall and drought for every sub-county (CHIRPS satellite rainfall, 5 km, since 1981), heat (ERA5-Land) and air pollution (CAMS) by district, and the ECMWF seasonal outlook. Use it alongside the health data: rainfall usually drives malaria one to two months later.", key = "climate"),
     filter_bar(area_ui(ns("area"), depth = 3),
                selectInput(ns("month"), "Month (for the map)", setNames(cm, fmt_month(cm)), width = "170px")),
     uiOutput(ns("hero")),

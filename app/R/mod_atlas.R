@@ -19,7 +19,7 @@ atlas_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Atlas", "Map of Busoga: facilities and context",
-              "Every health facility registered in DHIS2, coloured by reporting status and sized by level, with roads, water, schools, markets and towns from OpenStreetMap. Switch layers in the map control (top right)."),
+              "Every health facility registered in DHIS2, coloured by reporting status and sized by level, with roads, water, schools, markets and towns from OpenStreetMap. Switch layers in the map control (top right).", key = "atlas"),
     layout_sidebar(
       sidebar = sidebar(width = 300, open = "desktop",
         selectizeInput(ns("find"), "Find a facility", choices = NULL, options = list(placeholder = "Type a name...")),

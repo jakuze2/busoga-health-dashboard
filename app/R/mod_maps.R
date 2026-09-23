@@ -29,7 +29,7 @@ maps_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Maps", "Where is performance strongest and weakest?",
-              "Colour-coded maps from the official DHIS2 district and sub-county boundaries. Blue maps: higher is better. Red maps: lower is better. Classes are quintiles of the areas shown."),
+              "Colour-coded maps from the official DHIS2 district and sub-county boundaries. Blue maps: higher is better. Red maps: lower is better. Classes are quintiles of the areas shown.", key = "maps"),
     filter_bar(
       selectInput(ns("ind"), "Indicator", indicator_choices(), selected = "ANC03", width = "330px"),
       selectInput(ns("level"), "Map level", c("Districts / cities" = "district", "DLGs / municipalities" = "dlg",
@@ -43,7 +43,12 @@ maps_ui <- function(id) {
            div(class = "map-legend-note", "Boundaries: DHIS2 (Ministry of Health). Basemap © Esri.")),
       card(full_screen = TRUE, card_header("Ranking", span(class = "sub", "click a bar or an area to see its trend")),
            plotlyOutput(ns("rank"), height = 360),
-           plotlyOutput(ns("trend"), height = 250)))
+           plotlyOutput(ns("trend"), height = 250),
+           tags$a(href = "#", class = "sp-promo", onclick = sprintf("Shiny.setInputValue('%s', Math.random(), {priority: 'event'}); %s return false;", ns("to_spatial"), go_to_page("spatial")),
+                  fontawesome::fa("fire", fill = "#fff", height = "1em"),
+                  div(div(class = "sp-promo-h", "Find hot spots, clusters and trends for this indicator"),
+                      div(class = "sp-promo-s", "Spatial analysis: Gi* hot spots, Local Moran's I clusters, emerging hot spots, change and drivers")),
+                  span(class = "sp-promo-go", "→"))))
   )
 }
 
@@ -68,8 +73,10 @@ maps_server <- function(id) moduleServer(id, function(input, output, session) {
   })
   output$map <- renderLeaflet({
     base_map() |>
+      addProviderTiles(providers$Esri.WorldImagery, group = "Satellite imagery") |>
+      addProviderTiles(providers$Esri.WorldTopoMap, group = "Topographic") |>
       addPolylines(data = GEO$district, color = BRAND$navy, weight = 1.6, opacity = .9, group = "District lines") |>
-      addLayersControl(overlayGroups = c("Place names", "District lines"),
+      addLayersControl(baseGroups = c("Light", "Satellite imagery", "Topographic"), overlayGroups = c("Place names", "District lines"),
                        options = layersControlOptions(collapsed = TRUE))
   })
   observe({
@@ -100,6 +107,7 @@ maps_server <- function(id) moduleServer(id, function(input, output, session) {
     m |> addLegend("bottomright", pal = pal, values = v$s$value, opacity = .9, na.label = "No data",
                    title = HTML(sprintf("%s<br><span style='font-weight:400'>%s</span>", htmlEscape(ind_label(cd)), unit_label(cd))))
   })
+  observeEvent(input$to_spatial, if (is.function(session$userData$go_spatial)) session$userData$go_spatial(input$ind))
   observeEvent(input$map_shape_click, selected(input$map_shape_click$id))
   observeEvent(input$map_marker_click, selected(input$map_marker_click$id))
   observeEvent(event_data("plotly_click", source = ns("rank")), {

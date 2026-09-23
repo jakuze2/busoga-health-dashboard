@@ -4,7 +4,7 @@ deepdive_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Deep dive", "Profile of one area or facility",
-              "Everything about one unit: where it sits, how it performs on every indicator against its parent area and Busoga, its rank among peers, its trends and how well it reports."),
+              "Everything about one unit: where it sits, how it performs on every indicator against its parent area and Busoga, its rank among peers, its trends and how well it reports.", key = "deep"),
     filter_bar(
       selectizeInput(ns("unit"), "Area or facility", choices = NULL, width = "440px",
                      options = list(placeholder = "Search any district, DLG, sub-county or facility...")),

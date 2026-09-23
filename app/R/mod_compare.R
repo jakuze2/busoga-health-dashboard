@@ -4,7 +4,7 @@ compare_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Compare & trends", "Compare areas and facilities over time",
-              "Choose a level, pick up to eight units and watch them against the Busoga line. The league table ranks every unit at that level."),
+              "Choose a level, pick up to eight units and watch them against the Busoga line. The league table ranks every unit at that level.", key = "compare"),
     filter_bar(
       selectInput(ns("ind"), "Indicator", indicator_choices(), selected = "DEL01", width = "330px"),
       selectInput(ns("level"), "Level", c("Districts / cities" = "district", "DLGs / municipalities" = "dlg",

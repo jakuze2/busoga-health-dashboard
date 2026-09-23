@@ -33,6 +33,7 @@ if (mode == "full") {
 }
 if (mode %in% c("full", "monthly")) {
   run("Monthly data from DHIS2", R, c("R/03_extract.R", refresh))
+  run("Medicines, supplies and management (HMIS 105:06-09)", R, c("R/03c_extract_supplies.R", refresh))
   run("Compute indicators", R, "R/04_compute.R")
   run("Data quality and breakdowns", R, "R/05_quality.R")
   run("Validate against DHIS2", R, "R/06_validate.R")
@@ -49,6 +50,7 @@ if (mode == "full") {
   if (!is.na(py)) run_py("OpenStreetMap commerce", c("scripts/fetch_context_layers.py", "commerce"))
 }
 run("App data", R, "R/07_app_data.R")
+if (mode %in% c("full", "monthly")) run("Health system context: census 2024, World Bank, WHO", R, "R/08b_context.R")
 if (mode %in% c("full", "monthly")) run("Explainable AI (drivers of the monthly figures)", R, "R/09_explain.R")
 if (mode == "full") run("Open data: census history, access, hazards, food prices, commerce", R, "R/08_open_data.R")
 cat("\nDone. Check locally with shiny::runApp('app'), then push to GitHub.\n")
