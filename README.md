@@ -20,6 +20,8 @@ forecasting. Built for Busoga Health Forum (busogahealthforum.org).
 | Early warning: Climate & environment | Rainfall, drought index (SPI-3), heat days, PM2.5, ECMWF seasonal outlook, climate x malaria |
 | Early warning: Forecast | Any indicator, any area or facility, 3 to 12 months ahead with prediction intervals and a back-test |
 | Data quality | Completeness, timeliness, non-reporting facilities, consistency checks, outliers, where to improve |
+| Performance against targets | Every indicator with a Uganda national target (or else a global one) for any area, and a district-by-indicator matrix of who is below target |
+| Brief | A downloadable summary (Word or PDF) for any area, period and set of programmes: key facts, indicators below target, changes, district results, trend charts |
 | Download district data | District and Busoga aggregates only: no facility is identifiable in the file |
 | Indicators & methods | The indicator dictionary and how every number is made |
 
@@ -118,6 +120,13 @@ the logs. You can also run it by hand from the Actions tab (**Run workflow**, mo
 - Logo: Busoga Health Forum.
 
 ## Method notes
+
+- Every chart, map, table and tile has a download button (top right) that saves it as a PNG with its
+  title, the area and period selected, the source and the date.
+- Targets are in `app/targets.csv` (with sources): the Uganda national target (MoH Strategic Plan
+  2020/21-2024/25, Annual Health Sector Performance Report 2024/25) where one exists, otherwise a
+  global target (WHO, UNAIDS, Immunization Agenda 2030, ENAP/EPMM). Edit that file to change them.
+- Coverages above 100% are shown as 100% and marked *; the CSV download keeps the uncapped value.
 
 - Indicator values follow DHIS2: numerators and denominators are summed from facilities upward,
   then divided (pooled, never averaged). A missing operand counts as zero unless all are missing.

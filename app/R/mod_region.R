@@ -64,7 +64,7 @@ region_server <- function(id) moduleServer(id, function(input, output, session) 
     ord <- x[service == "Primary health care"][order(pct)]$district
     plot_ly(x, y = ~factor(district, levels = ord), x = ~pct, color = ~service, colors = c(Hospital = BRAND$maroon, `Primary health care` = "#00897B"),
             type = "bar", orientation = "h", hovertemplate = "%{y}: %{x:.0f}% within 1 hour<extra>%{fullData.name}</extra>") |>
-      plotly_base() |> layout(barmode = "group", xaxis = list(title = "% of people within 1 hour", range = c(0, 100)), yaxis = list(title = NULL),
+      plotly_base() |> layout(barmode = "group", xaxis = list(title = "% of people within 1 hour", range = c(0, 100)), yaxis = list(title = ""),
                               title = list(text = "<b>Reach a health facility within 1 hour</b>", x = 0, font = list(size = 13)), margin = list(t = 36))
   })
   output$acc_edu <- renderPlotly({
@@ -72,7 +72,7 @@ region_server <- function(id) moduleServer(id, function(input, output, session) 
     ord <- x[reach == "5km"][order(pct)]$district
     plot_ly(x, y = ~factor(district, levels = ord), x = ~pct, color = ~reach, colors = c("#cde2fb", "#6da7ec", "#3949AB"),
             type = "bar", orientation = "h", hovertemplate = "%{y}: %{x:.0f}% within %{fullData.name}<extra></extra>") |>
-      plotly_base() |> layout(barmode = "group", xaxis = list(title = "% of people", range = c(0, 100)), yaxis = list(title = NULL),
+      plotly_base() |> layout(barmode = "group", xaxis = list(title = "% of people", range = c(0, 100)), yaxis = list(title = ""),
                               title = list(text = "<b>Live within reach of a school</b>", x = 0, font = list(size = 13)), margin = list(t = 36))
   })
   output$flood <- renderPlotly({
@@ -84,7 +84,7 @@ region_server <- function(id) moduleServer(id, function(input, output, session) 
                   RP100_education_30cm_pct = "Schools")[as.character(variable)]]
     plot_ly(x, y = ~district, x = ~value, color = ~what, colors = c(Cropland = "#2E7D32", `Health facilities` = BRAND$maroon, Schools = "#3949AB"),
             type = "bar", orientation = "h", hovertemplate = "%{y}: %{x:.1f}%<extra>%{fullData.name}</extra>") |>
-      plotly_base() |> layout(barmode = "group", xaxis = list(title = "% exposed, 1-in-100-year flood (30 cm+)"), yaxis = list(title = NULL),
+      plotly_base() |> layout(barmode = "group", xaxis = list(title = "% exposed, 1-in-100-year flood (30 cm+)"), yaxis = list(title = ""),
                               title = list(text = "<b>Flood exposure</b>", x = 0, font = list(size = 13)), margin = list(t = 36))
   })
   output$vul <- renderReactable({
@@ -121,14 +121,14 @@ region_server <- function(id) moduleServer(id, function(input, output, session) 
     if (!"RP100_crops_30cm_km2" %in% names(f)) return(empty_plot())
     plot_ly(f[order(RP100_crops_30cm_km2)], y = ~factor(district, levels = district), x = ~RP100_crops_30cm_km2, type = "bar", orientation = "h",
             marker = list(color = "#2E7D32"), hovertemplate = "%{y}: %{x:,.1f} km²<extra></extra>") |>
-      plotly_base(legend = FALSE) |> layout(xaxis = list(title = "Cropland exposed to a 1-in-100-year flood (km²)"), yaxis = list(title = NULL))
+      plotly_base(legend = FALSE) |> layout(xaxis = list(title = "Cropland exposed to a 1-in-100-year flood (km²)"), yaxis = list(title = ""))
   })
   output$land <- renderPlotly({
     req(LAND); x <- LAND$summary
     plot_ly(x, y = ~district, x = ~pct, color = ~type, type = "bar", orientation = "h",
             colors = c("Forest Reserve" = "#2E7D32", "Water" = "#3987e5", "Rangeland" = "#C17D11", "National Park" = "#00897B", "Game Reserve" = "#8E44AD"),
             hovertemplate = "%{y}: %{x:.1f}% of land<extra>%{fullData.name}</extra>") |>
-      plotly_base() |> layout(barmode = "stack", xaxis = list(title = "% of district area (UBOS 2006)"), yaxis = list(title = NULL))
+      plotly_base() |> layout(barmode = "stack", xaxis = list(title = "% of district area (UBOS 2006)"), yaxis = list(title = ""))
   })
   output$com_map <- renderLeaflet({
     req(COM); m <- base_map() |> addPolylines(data = GEO$district, color = BRAND$navy, weight = 1.4)
@@ -144,6 +144,6 @@ region_server <- function(id) moduleServer(id, function(input, output, session) 
     p <- plot_ly()
     for (k in names(COM_COL)) { z <- x[type == k]; if (!nrow(z)) next
       p <- p |> add_bars(data = z, y = ~factor(district, levels = ord), x = ~N, name = k, orientation = "h", marker = list(color = COM_COL[[k]])) }
-    p |> plotly_base() |> layout(barmode = "stack", xaxis = list(title = "Places mapped"), yaxis = list(title = NULL))
+    p |> plotly_base() |> layout(barmode = "stack", xaxis = list(title = "Places mapped"), yaxis = list(title = ""))
   })
 })

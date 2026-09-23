@@ -121,6 +121,7 @@ atlas_server <- function(id) moduleServer(id, function(input, output, session) {
       addScaleBar("bottomright", options = scaleBarOptions(imperial = FALSE))
   })
   observe({
+    req(input$map_zoom)            # wait until the map exists (it is not drawn while its tab is hidden)
     s <- shown()
     leafletProxy(ns("map")) |> clearGroup("DHIS2 health facilities") |>
       addCircleMarkers(data = s, lng = ~lon, lat = ~lat, radius = LEVEL_RADIUS(s$grp_level), layerId = ~uid,

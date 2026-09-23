@@ -116,7 +116,7 @@ dq_server <- function(id) moduleServer(id, function(input, output, session) {
                hovertemplate = "%{y}: %{x:.0f}% complete<extra></extra>") |>
       add_bars(x = ~time, name = "Timeliness", marker = list(color = BRAND$maroon), orientation = "h",
                hovertemplate = "%{y}: %{x:.0f}% on time<extra></extra>") |>
-      plotly_base() |> layout(barmode = "group", bargap = .3, xaxis = list(range = c(0, 100), title = "%"), yaxis = list(title = NULL))
+      plotly_base() |> layout(barmode = "group", bargap = .3, xaxis = list(range = c(0, 100), title = "%"), yaxis = list(title = ""))
   })
 
   output$heat <- renderPlotly({
@@ -133,7 +133,7 @@ dq_server <- function(id) moduleServer(id, function(input, output, session) {
             colorscale = list(c(0, "#e8e7e2"), c(.249, "#e8e7e2"), c(.25, "#d03b3b"), c(.499, "#d03b3b"),
                               c(.5, "#fab219"), c(.749, "#fab219"), c(.75, "#0ca30c"), c(1, "#0ca30c")),
             showscale = FALSE, xgap = 1, ygap = 1, hovertemplate = "%{y}<br>%{x|%b %Y}: %{text}<extra></extra>") |>
-      plotly_base(legend = FALSE) |> layout(yaxis = list(autorange = "reversed", tickfont = list(size = 9), title = NULL))
+      plotly_base(legend = FALSE) |> layout(yaxis = list(autorange = "reversed", tickfont = list(size = 9), title = ""))
   })
 
   nr <- reactive({
@@ -147,7 +147,7 @@ dq_server <- function(id) moduleServer(id, function(input, output, session) {
     for (s in intersect(names(REPORT_STATUS), unique(x$report_status)))
       p <- p |> add_bars(data = x[report_status == s], y = ~district, x = ~N, name = s, orientation = "h",
                          marker = list(color = REPORT_STATUS[[s]], line = list(color = "white", width = 1)))
-    p |> plotly_base() |> layout(barmode = "stack", yaxis = list(title = NULL, categoryorder = "total ascending"), xaxis = list(title = "Facilities"))
+    p |> plotly_base() |> layout(barmode = "stack", yaxis = list(title = "", categoryorder = "total ascending"), xaxis = list(title = "Facilities"))
   })
   output$nr_tbl <- renderDT({
     x <- nr()[, .(Facility = name, Status = report_status, `Last report` = ifelse(is.na(last_report), "never", fmt_month(last_report)),
@@ -163,7 +163,7 @@ dq_server <- function(id) moduleServer(id, function(input, output, session) {
     if (!nrow(x)) return(empty_plot("No consistency flags in this selection"))
     plot_ly(x, y = ~factor(check, levels = check), x = ~N, type = "bar", orientation = "h", marker = list(color = STATUS$critical),
             hovertemplate = "%{y}: %{x:,} facility-months<extra></extra>") |>
-      plotly_base(legend = FALSE) |> layout(yaxis = list(title = NULL, tickfont = list(size = 10)), xaxis = list(title = "Facility-months flagged"))
+      plotly_base(legend = FALSE) |> layout(yaxis = list(title = "", tickfont = list(size = 10)), xaxis = list(title = "Facility-months flagged"))
   })
   output$chk_tbl <- renderDT({
     x <- chk()[order(-period)][, .(Facility = ou_name[uid], District = OU$district[match(uid, OU$uid)], Month = fmt_month(period),

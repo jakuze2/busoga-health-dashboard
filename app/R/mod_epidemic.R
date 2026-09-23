@@ -174,7 +174,7 @@ epidemic_server <- function(id) moduleServer(id, function(input, output, session
               list(c(0, "#f4f3ef"), c(1, "#256abf")),
             colorbar = list(title = if (z_col == "ratio") "Cases / alert<br>threshold" else "Cases"),
             hovertemplate = paste0("%{y}<br>%{x|W%V %G}: %{z:.2f}", if (z_col == "ratio") "× threshold" else " cases", "<extra></extra>")) |>
-      plotly_base(legend = FALSE) |> layout(yaxis = list(autorange = "reversed", title = NULL, tickfont = list(size = 9)))
+      plotly_base(legend = FALSE) |> layout(yaxis = list(autorange = "reversed", title = "", tickfont = list(size = 9)))
   })
 
   output$rep <- renderPlotly({

@@ -17,7 +17,8 @@ download_ui <- function(id) {
            downloadButton(ns("dl"), "Download CSV", class = "btn-primary w-100 mt-2"),
            downloadButton(ns("dict"), "Download indicator dictionary", class = "btn-outline-secondary w-100 mt-2"),
            info_note("Values follow DHIS2 rules: rates are sum(numerator) / sum(denominator); population-based indicators are annualised. ",
-                     "Numerators below 5 are shown as they are in DHIS2; take care when publishing very small counts.")),
+                     "Numerators below 5 are shown as they are in DHIS2; take care when publishing very small counts. ",
+                     "Coverages above 100% are exported uncapped (the dashboard shows them as 100%); the column above_100_shown_capped marks them.")),
       card(full_screen = TRUE, card_header("Preview", span(class = "sub", textOutput(ns("n"), inline = TRUE))),
            DTOutput(ns("preview"))))
   )
@@ -40,12 +41,12 @@ download_server <- function(id) moduleServer(id, function(input, output, session
              period = bucket_label(bucket, input$by))]
     d <- IND[match(s$code, IND$code)]
     s[, `:=`(indicator = d$label, theme = as.character(d$theme), unit = unit_label(code),
-             value = round(value, 2), numerator = round(num, 2),
+             value = round(value_raw, 2), numerator = round(num, 2),
              denominator = fifelse(d$unit == "count", NA_real_, round(fifelse(d$annualized, den_mean, den_sum), 2)),
              months_in_period = n_months, facility_months_reporting = n_rep)]
     out <- s[, .(area_level = fifelse(level == "region", "Region", "District / City"), area, period, theme,
                  indicator_code = code, indicator, unit, value, numerator, denominator, months_in_period,
-                 facility_months_reporting)]
+                 facility_months_reporting, above_100_shown_capped = capped)]
     if (!isTRUE(input$nd)) out[, c("numerator", "denominator") := NULL]
     setorder(out, area_level, area, indicator_code, period)
     out

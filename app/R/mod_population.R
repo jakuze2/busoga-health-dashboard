@@ -29,7 +29,7 @@ pyramid_plot <- function(x, title = NULL, compare = NULL, compare_name = "Compar
   }
   m <- ceiling(max(c(abs(x$share), if (!is.null(compare)) 100 * compare[, sum(pop), by = .(age, sex)]$V1 / sum(compare$pop))) + 0.5)
   p |> plotly_base() |>
-    layout(barmode = "overlay", bargap = .08, yaxis = list(title = NULL),
+    layout(barmode = "overlay", bargap = .08, yaxis = list(title = ""),
            xaxis = list(title = "% of population", range = c(-m, m), tickvals = seq(-m, m, by = max(1, round(m / 4))),
                         ticktext = abs(seq(-m, m, by = max(1, round(m / 4))))),
            title = if (!is.null(title)) list(text = title, font = list(size = 13), x = 0) else NULL, margin = list(t = if (!is.null(title)) 36 else 10))
@@ -115,7 +115,7 @@ population_server <- function(id) moduleServer(id, function(input, output, sessi
     ord <- x[, sum(pop), by = district][order(V1)]$district
     plot_ly(x, y = ~factor(district, levels = ord), x = ~pop, color = ~sex, colors = c(Female = BRAND$maroon, Male = BRAND$navy),
             type = "bar", orientation = "h", hovertemplate = "%{y}: %{x:,.0f}<extra></extra>") |>
-      plotly_base(ytitle = NULL) |> layout(barmode = "stack", xaxis = list(title = "Population (UBOS 2023)"), yaxis = list(title = NULL))
+      plotly_base(ytitle = "") |> layout(barmode = "stack", xaxis = list(title = "Population (UBOS 2023)"), yaxis = list(title = ""))
   })
   output$ubos_pyr <- renderPlotly({
     req(UBOS); a <- area()
@@ -161,7 +161,7 @@ population_server <- function(id) moduleServer(id, function(input, output, sessi
     for (k in names(SCHOOL_COL)) { z <- long[cat == k]; if (!nrow(z) || !sum(z$n)) next
       p <- p |> add_bars(data = z, y = ~factor(name, levels = ord), x = ~n, name = k, orientation = "h", marker = list(color = SCHOOL_COL[[k]]),
                          hovertemplate = paste0(k, ": %{x}<extra></extra>")) }
-    p |> plotly_base() |> layout(barmode = "stack", yaxis = list(title = NULL, tickfont = list(size = 9)), xaxis = list(title = "Schools"))
+    p |> plotly_base() |> layout(barmode = "stack", yaxis = list(title = "", tickfont = list(size = 9)), xaxis = list(title = "Schools"))
   })
   output$edu_tbl <- renderReactable({
     req(EDU); x <- EDU[level %in% c("district", "subcounty")][, `:=`(Area = ou_name[uid], Level = LEVEL_LABEL[level])]

@@ -95,7 +95,7 @@ definitions_server <- function(id) moduleServer(id, function(input, output, sess
     s[, name := ou_name[uid]]; s <- s[order(value)]
     plot_ly(s, x = ~value, y = ~factor(name, levels = name), type = "bar", orientation = "h",
             marker = list(color = theme_col(as.character(IND[code == cd, theme]))), hovertemplate = "%{y}: %{x:,.1f}<extra></extra>") |>
-      plotly_base(legend = FALSE) |> layout(yaxis = list(title = NULL), xaxis = list(title = unit_label(cd)))
+      plotly_base(legend = FALSE) |> layout(yaxis = list(title = ""), xaxis = list(title = unit_label(cd)))
   })
   output$elems <- renderDT({
     x <- ELEM[code == sel(), .(Part = part, `Data element` = de_name, Category = category, `Reporting form` = period_type, UID = de)]

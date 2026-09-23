@@ -75,7 +75,7 @@ facilities_server <- function(id) moduleServer(id, function(input, output, sessi
     renderPlotly(plot_ly(x, y = ~factor(cadre, levels = rev(cadre))) |>
       add_bars(x = ~norm, name = "Staffing norm", marker = list(color = "#d9d7ee")) |>
       add_bars(x = ~filled, name = "Filled", marker = list(color = BRAND$navy)) |>
-      plotly_base() |> layout(barmode = "overlay", yaxis = list(title = NULL), xaxis = list(title = "Posts")))
+      plotly_base() |> layout(barmode = "overlay", yaxis = list(title = ""), xaxis = list(title = "Posts")))
   })
   output$tmpl <- downloadHandler(filename = "busoga_staffing_template.csv", content = function(f)
     fwrite(OU[level_name == "facility", .(uid, facility = name, district, cadre = "", filled = NA_integer_, norm = NA_integer_)], f))

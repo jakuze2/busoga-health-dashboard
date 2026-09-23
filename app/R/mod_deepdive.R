@@ -151,7 +151,7 @@ deepdive_server <- function(id, jump = NULL) moduleServer(id, function(input, ou
             colorscale = list(c(0, "#d03b3b"), c(.5, "#fab219"), c(.8, "#b7e4b7"), c(1, "#0ca30c")),
             colorbar = list(title = "% received", len = .8),
             hovertemplate = "%{y}<br>%{x|%b %Y}: %{z:.0f}% received<extra></extra>") |>
-      plotly_base(legend = FALSE) |> layout(yaxis = list(title = NULL, autorange = "reversed"), xaxis = list(title = NULL))
+      plotly_base(legend = FALSE) |> layout(yaxis = list(title = "", autorange = "reversed"), xaxis = list(title = ""))
   })
 
   output$dq <- renderUI({

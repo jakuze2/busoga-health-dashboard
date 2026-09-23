@@ -195,7 +195,7 @@ explorer_server <- function(id, incoming = NULL) moduleServer(id, function(input
     plot_ly(s, x = ~value, y = ~factor(label, levels = label), type = "bar", orientation = "h", marker = list(color = ~fill),
             hovertemplate = "%{y}: %{x:,.1f}<extra></extra>") |>
       plotly_base(legend = FALSE) |>
-      layout(yaxis = list(title = NULL, tickfont = list(size = 9)), xaxis = list(title = unit_label(c1)),
+      layout(yaxis = list(title = "", tickfont = list(size = 9)), xaxis = list(title = unit_label(c1)),
              shapes = if (!is.na(ref)) list(list(type = "line", x0 = ref, x1 = ref, y0 = 0, y1 = 1, yref = "paper",
                                                  line = list(color = BRAND$navy, dash = "dash"))),
              annotations = if (!is.na(ref)) list(list(x = ref, y = 1.01, yref = "paper", text = "Busoga", showarrow = FALSE,
@@ -216,6 +216,6 @@ explorer_server <- function(id, incoming = NULL) moduleServer(id, function(input
             type = "heatmap", zmin = -1, zmax = 1, texttemplate = "%{text}", textfont = list(size = 10),
             colorscale = list(c(0, "#b3261e"), c(.5, "#f4f3ef"), c(1, "#1b7a3a")), showscale = FALSE, xgap = 2, ygap = 2,
             hovertemplate = "%{y}<br>%{x}: %{text}<extra></extra>") |>
-      plotly_base(legend = FALSE) |> layout(xaxis = list(side = "top", tickangle = -20, title = NULL), yaxis = list(autorange = "reversed", title = NULL))
+      plotly_base(legend = FALSE) |> layout(xaxis = list(side = "top", tickangle = -20, title = ""), yaxis = list(autorange = "reversed", title = ""))
   })
 })

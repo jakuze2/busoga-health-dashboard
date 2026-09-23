@@ -73,6 +73,7 @@ maps_server <- function(id) moduleServer(id, function(input, output, session) {
                        options = layersControlOptions(collapsed = TRUE))
   })
   observe({
+    req(input$map_zoom)            # wait until the map exists (it is not drawn while its tab is hidden)
     v <- vals(); cd <- input$ind; dirn <- IND[code == cd, direction]
     ramp <- seq_ramp(dirn)[2:6]
     m <- leafletProxy(ns("map")) |> clearGroup("data") |> clearControls() |> clearMarkers()
@@ -116,7 +117,7 @@ maps_server <- function(id) moduleServer(id, function(input, output, session) {
             customdata = ~uid, marker = list(color = col, line = list(color = "white", width = 1)),
             hovertemplate = paste0("%{y}<br>", ind_label(input$ind), ": %{x:,.1f}<extra></extra>")) |>
       plotly_base(legend = FALSE) |>
-      layout(yaxis = list(title = NULL, tickfont = list(size = 10)), xaxis = list(title = unit_label(input$ind)),
+      layout(yaxis = list(title = "", tickfont = list(size = 10)), xaxis = list(title = unit_label(input$ind)),
              shapes = if (!is.na(v$ref)) list(list(type = "line", x0 = v$ref, x1 = v$ref, y0 = 0, y1 = 1, yref = "paper",
                                                    line = list(color = BRAND$maroon, dash = "dash", width = 1.5))),
              annotations = if (!is.na(v$ref)) list(list(x = v$ref, y = 1.02, yref = "paper", text = "Busoga", showarrow = FALSE,

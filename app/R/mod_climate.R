@@ -60,11 +60,11 @@ climate_server <- function(id) moduleServer(id, function(input, output, session)
       add_bars(y = ~rain_mm, name = "Rainfall", marker = list(color = "#3987e5"), hovertemplate = "%{x|%b %Y}: %{y:.0f} mm<extra></extra>") |>
       add_lines(y = ~normal, name = "1991-2020 normal", line = list(color = BRAND$ink2, dash = "dot", width = 1.5),
                 hovertemplate = "Normal: %{y:.0f} mm<extra></extra>") |>
-      layout(yaxis = list(title = "mm per month", gridcolor = BRAND$grid))
+      layout(yaxis = list(title = "mm per month", gridcolor = BRAND$grid), xaxis = list(title = ""))
     p2 <- plot_ly(x, x = ~d, y = ~spi3, type = "bar", name = "SPI-3",
                   marker = list(color = unname(SPI_COL[x$spi_class %||% "Near normal"])),
                   text = ~spi_class, hovertemplate = "%{x|%b %Y}: SPI-3 %{y:.2f} (%{text})<extra></extra>") |>
-      layout(yaxis = list(title = "SPI-3", gridcolor = BRAND$grid, zeroline = TRUE, zerolinecolor = BRAND$base),
+      layout(yaxis = list(title = "SPI-3", gridcolor = BRAND$grid, zeroline = TRUE, zerolinecolor = BRAND$base), xaxis = list(title = ""),
              shapes = lapply(c(-1, -1.5, -2), function(h) list(type = "line", xref = "paper", x0 = 0, x1 = 1, y0 = h, y1 = h,
                                                                line = list(color = "#e34948", dash = "dot", width = .8))))
     subplot(p1, p2, nrows = 2, shareX = TRUE, heights = c(.6, .4), titleY = TRUE, margin = .04) |>
@@ -92,16 +92,16 @@ climate_server <- function(id) moduleServer(id, function(input, output, session)
     plot_ly(x, x = ~spi3, y = ~factor(name, levels = rev(name)), type = "bar", orientation = "h",
             marker = list(color = unname(SPI_COL[x$spi_class])), hovertemplate = "%{y}: %{x:.2f}<extra></extra>") |>
       plotly_base(legend = FALSE) |> layout(title = list(text = "<b>Driest 25 sub-counties</b>", font = list(size = 12), x = 0),
-                                            yaxis = list(title = NULL, tickfont = list(size = 9)), xaxis = list(title = "SPI-3"), margin = list(t = 30))
+                                            yaxis = list(title = "", tickfont = list(size = 9)), xaxis = list(title = "SPI-3"), margin = list(t = 30))
   })
 
   output$heat <- renderPlotly({
     x <- cl(); if (!nrow(x)) return(empty_plot()); x[, d := ym_date(period)]
     p1 <- plot_ly(x, x = ~d, y = ~tmax_c, type = "scatter", mode = "lines", name = "Mean daily maximum (°C)",
                   line = list(color = "#eb6834", width = 2), hovertemplate = "%{x|%b %Y}: %{y:.1f}°C<extra></extra>") |>
-      layout(yaxis = list(title = "°C", gridcolor = BRAND$grid))
+      layout(yaxis = list(title = "°C", gridcolor = BRAND$grid), xaxis = list(title = ""))
     p2 <- plot_ly(x, x = ~d, y = ~heat_days, type = "bar", name = "Heat days", marker = list(color = "#e34948"),
-                  hovertemplate = "%{x|%b %Y}: %{y:.0f} heat days<extra></extra>") |> layout(yaxis = list(title = "days", gridcolor = BRAND$grid))
+                  hovertemplate = "%{x|%b %Y}: %{y:.0f} heat days<extra></extra>") |> layout(yaxis = list(title = "days", gridcolor = BRAND$grid), xaxis = list(title = ""))
     subplot(p1, p2, nrows = 2, shareX = TRUE, titleY = TRUE, margin = .05) |>
       layout(hovermode = "x unified", legend = list(orientation = "h", y = -0.12), paper_bgcolor = "rgba(0,0,0,0)",
              plot_bgcolor = "rgba(0,0,0,0)") |> config(displaylogo = FALSE)
@@ -159,9 +159,9 @@ climate_server <- function(id) moduleServer(id, function(input, output, session)
     cors <- vapply(lags, function(L) { r <- shift(j$r_dev, L); suppressWarnings(cor(j$c_dev, r, use = "complete.obs")) }, 0)
     p1 <- plot_ly(j, x = ~ym_date(period), y = ~cases, type = "scatter", mode = "lines", name = "Confirmed malaria",
                   line = list(color = "#008300", width = 2), hovertemplate = "%{x|%b %Y}: %{y:,.0f} cases<extra></extra>") |>
-      layout(yaxis = list(title = "cases", gridcolor = BRAND$grid))
+      layout(yaxis = list(title = "cases", gridcolor = BRAND$grid), xaxis = list(title = ""))
     p2 <- plot_ly(j, x = ~ym_date(period), y = ~rain_mm, type = "bar", name = "Rainfall", marker = list(color = "#3987e5"),
-                  hovertemplate = "%{x|%b %Y}: %{y:.0f} mm<extra></extra>") |> layout(yaxis = list(title = "mm", gridcolor = BRAND$grid))
+                  hovertemplate = "%{x|%b %Y}: %{y:.0f} mm<extra></extra>") |> layout(yaxis = list(title = "mm", gridcolor = BRAND$grid), xaxis = list(title = ""))
     p3 <- plot_ly(x = paste0(lags, " mo"), y = cors, type = "bar", name = "Correlation with rainfall N months earlier",
                   marker = list(color = BRAND$navy), hovertemplate = "Rainfall %{x} earlier: r = %{y:.2f}<extra></extra>") |>
       layout(yaxis = list(title = "r", range = c(-1, 1), gridcolor = BRAND$grid), xaxis = list(title = "rainfall lead"))

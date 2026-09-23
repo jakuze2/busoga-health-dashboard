@@ -106,12 +106,13 @@ page_head <- function(eyebrow, title, text = NULL, right = NULL)
 # Mini area chart for KPI tiles: gradient fill, y-axis min/max labels, first/last month on the
 # x-axis, the latest point marked, optional dotted reference (e.g. Busoga). Inline SVG, so a page
 # with dozens of tiles stays fast.
-mini_chart <- function(v, periods, color, code, ref = NA, w = 260, h = 92) {
+mini_chart <- function(v, periods, color, code, ref = NA, w = 260, h = 92, target = NA) {
   ok <- is.finite(v); v <- v[ok]; periods <- periods[ok]
   if (length(v) < 2) return(div(class = "mini-empty", "not enough data for a trend"))
   gid <- paste0("g", substr(gsub("[^0-9a-z]", "", tolower(paste0(code, color, length(v), sum(v)))), 1, 14))
   pl <- 34; pr <- 8; pt <- 8; pb <- 18                  # padding: left axis labels, bottom month labels
-  lo <- min(c(v, if (is.finite(ref)) ref)); hi <- max(c(v, if (is.finite(ref)) ref))
+  lo <- min(c(v, if (is.finite(ref)) ref, if (is.finite(target)) target))
+  hi <- max(c(v, if (is.finite(ref)) ref, if (is.finite(target)) target))
   if (hi == lo) { lo <- lo - 1; hi <- hi + 1 }
   lo <- max(0, lo - 0.08 * (hi - lo)); hi <- hi + 0.08 * (hi - lo)
   x <- pl + (seq_along(v) - 1) / (length(v) - 1) * (w - pl - pr)
@@ -121,6 +122,9 @@ mini_chart <- function(v, periods, color, code, ref = NA, w = 260, h = 92) {
   lab <- function(z) fmt_val(z, code)
   refl <- if (is.finite(ref)) { yr <- pt + (hi - ref) / (hi - lo) * (h - pt - pb)
     sprintf('<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="#898781" stroke-width="1" stroke-dasharray="3 3"/>', pl, w - pr, yr, yr) } else ""
+  if (is.finite(target)) { yt <- pt + (hi - target) / (hi - lo) * (h - pt - pb)
+    refl <- paste0(refl, sprintf('<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="#b3261e" stroke-width="1.2" stroke-dasharray="6 3"><title>Target %s</title></line>',
+                                 pl, w - pr, yt, yt, htmlEscape(lab(target)))) }
   HTML(sprintf(
     '<svg viewBox="0 0 %d %d" width="100%%" height="%d" role="img" aria-label="trend">
       <defs><linearGradient id="%s" x1="0" x2="0" y1="0" y2="1">
@@ -133,7 +137,7 @@ mini_chart <- function(v, periods, color, code, ref = NA, w = 260, h = 92) {
       <circle cx="%.1f" cy="%.1f" r="3.6" fill="#fff" stroke="%s" stroke-width="2"/></svg>',
     w, h, h, gid, color, color,
     pl, w - pr, pt, pt, pl, w - pr, h - pb, h - pb,
-    pl - 4, pt + 8, htmlEscape(lab(hi)), pl - 4, h - pb, htmlEscape(lab(lo)),
+    pl - 4, pt + 8, htmlEscape(lab(max(c(v, ref, target), na.rm = TRUE))), pl - 4, h - pb, htmlEscape(lab(min(c(v, ref, target), na.rm = TRUE))),
     pl, h - 4, format(ym_date(periods[1]), "%b %y"), w - pr, h - 4, format(ym_date(tail(periods, 1)), "%b %y"),
     refl, area, gid, line, color, tail(x, 1), tail(y, 1), color))
 }

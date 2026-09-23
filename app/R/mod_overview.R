@@ -70,8 +70,10 @@ overview_server <- function(id) moduleServer(id, function(input, output, session
       col <- theme_col(th)
       tiles <- lapply(HEADLINE[[th]], function(cd) {
         v <- cur[code == cd, value]; v <- if (length(v)) v else NA
+        capd <- isTRUE(cur[code == cd, capped][1])
         pv <- prev[code == cd, value]; pv <- if (length(pv)) pv else NA
         dirn <- IND[code == cd, direction]
+        if (!is.null(pw) && isTRUE(SERIES_START[cd] > pw[1])) pv <- NA
         delta <- if (!is.na(v) && !is.na(pv) && pv != 0) {
           ch <- v - pv; up <- ch >= 0
           good <- (dirn == "high" && up) || (dirn == "low" && !up)
@@ -86,9 +88,10 @@ overview_server <- function(id) moduleServer(id, function(input, output, session
             div(class = "kpi-top", div(class = "kpi-label", ind_label(cd),
                     if (IND[code == cd, area_only]) span(class = "muted", title = "Population-based: area level only", " ‡")),
                 span(class = "kpi-go", "↗")),
-            div(class = "kpi-mid", div(class = "kpi-value", fmt_val(v, cd)), delta),
+            div(class = "kpi-mid", div(class = "kpi-value", fmt_val(v, cd), if (capd) span(class = "cap-mark", title = CAP_NOTE, "*")), delta),
             div(class = "kpi-sub", sprintf("%s · vs previous %d months", unit_label(cd), p$n)),
-            div(class = "kpi-chart", mini_chart(tr$value, tr$bucket, col, cd, refv)))
+            target_chip(v, cd, p$n),
+            div(class = "kpi-chart", mini_chart(tr$value, tr$bucket, col, cd, refv, target = target_value_line(cd, monthly = TRUE))))
       })
       div(class = "theme-block", style = sprintf("--th:%s", col),
           div(class = "theme-head",
@@ -102,7 +105,8 @@ overview_server <- function(id) moduleServer(id, function(input, output, session
     tagList(div(class = "theme-grid", blocks),
             info_note("Click any tile to analyse that indicator in depth, or 'Explore all' to compare a whole programme. ",
                       "‡ population-based (denominator is the projected population), so areas only. ",
-                      "Change pills are green when the indicator moved in the desirable direction. Charts show the last 24 months; the dotted line is Busoga."))
+                      "Change pills are green when the indicator moved in the desirable direction. Charts show the last 24 months; the dotted line is Busoga and the dashed red line the target. ",
+                      TARGET_NOTE, " ", CAP_NOTE))
   })
   observeEvent(input$open, {
     o <- input$open; a <- area(); p <- per()
@@ -139,8 +143,9 @@ overview_server <- function(id) moduleServer(id, function(input, output, session
       tags$a(href = "#", class = "kpi kpi-link asrh-tile", style = sprintf("--th:%s", col),
              onclick = sprintf("Shiny.setInputValue('%s', {code: '%s', nonce: Math.random()}, {priority: 'event'}); %s return false;", ns("open"), cd, GO_EXPLORER),
              div(class = "kpi-top", div(class = "kpi-label", ind_label(cd)), span(class = "kpi-go", "↗")),
-             div(class = "kpi-mid", div(class = "kpi-value", fmt_val(v, cd)), pill(v, pv, IND[code == cd, direction])),
-             div(class = "kpi-sub", if (is.na(END_OF[cd])) p$label else ended_note(cd))) }
+             div(class = "kpi-mid", div(class = "kpi-value", fmt_val(v, cd), if (isTRUE(cur[code == cd, capped][1])) span(class = "cap-mark", title = CAP_NOTE, "*")),
+                 pill(v, pv, IND[code == cd, direction])),
+             div(class = "kpi-sub", if (is.na(END_OF[cd])) p$label else ended_note(cd)), target_chip(v, cd, p$n)) }
     div(class = "theme-block asrh-block", style = sprintf("--th:%s", col),
         div(class = "theme-head",
             span(class = "theme-badge", fontawesome::fa("person-half-dress", fill = "#fff", height = "1.05em")),

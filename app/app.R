@@ -18,12 +18,14 @@ ui <- page_navbar(
   theme = bhf_theme, fillable = FALSE,
   navbar_options = navbar_options(position = "static-top", bg = "#ffffff", theme = "light"),
   header = tags$head(tags$link(rel = "stylesheet", href = "styles.css"),
+                     tags$script(src = "html-to-image.min.js"), tags$script(src = "bhf-download.js"),
                      tags$link(rel = "icon", type = "image/png", href = "favicon.png"),
                      tags$meta(name = "viewport", content = "width=device-width, initial-scale=1")),
   nav_panel(tagList(nav_icon("house"), "Overview"), value = "overview", overview_ui("overview")),
   nav_panel(tagList(nav_icon("hospital"), "Facilities"), value = "facilities", facilities_ui("facilities")),
   nav_menu(tagList(nav_icon("chart-column"), "Analyse"),
     nav_panel(tagList(nav_icon("magnifying-glass-chart"), "Indicator explorer"), value = "explorer", explorer_ui("explorer")),
+    nav_panel(tagList(nav_icon("bullseye"), "Performance against targets"), value = "targets", targets_ui("targets")),
     nav_panel(tagList(nav_icon("table-cells"), "Scorecard"), value = "scorecard", scorecard_ui("scorecard")),
     nav_panel(tagList(nav_icon("chart-line"), "Compare & trends"), value = "compare", compare_ui("compare")),
     nav_panel(tagList(nav_icon("sitemap"), "Cascade drill-down"), value = "drill", drill_ui("drill")),
@@ -40,6 +42,7 @@ ui <- page_navbar(
     nav_panel(tagList(nav_icon("people-group"), "Population & education"), value = "population", population_ui("population")),
     nav_panel(tagList(nav_icon("chart-pie"), "Busoga in numbers: census, access, farming, commerce"), value = "region", region_ui("region"))),
   nav_panel(tagList(nav_icon("clipboard-check"), "Data quality"), value = "dq", dq_ui("dq")),
+  nav_panel(tagList(nav_icon("file-lines"), "Brief"), value = "brief", brief_ui("brief")),
   nav_panel(tagList(nav_icon("circle-info"), "About"), value = "info", info_ui("info")),
   nav_menu(tagList(nav_icon("book"), "Reference"), align = "right",
     nav_panel(tagList(nav_icon("book"), "Indicator definitions"), value = "definitions", definitions_ui("definitions")),
@@ -55,6 +58,8 @@ server <- function(input, output, session) {
   overview_server("overview")
   facilities_server("facilities")
   explorer_server("explorer", incoming = session$userData$explore)
+  targets_server("targets")
+  brief_server("brief")
   scorecard_server("scorecard")
   compare_server("compare")
   drill_server("drill")

@@ -1,0 +1,30 @@
+code,national,national_source,global,global_source,note
+ANC01,,,>=95,"WHO EMTCT validation guidance 2021, Table 1 (ANC 1 coverage)",Global value is an EMTCT validation criterion
+ANC02,>=56,"MoH Strategic Plan 2020/21-2024/25 Table 7; AHSPR FY2024/25 Table 33 (target 2024/25)",>=90,"ENAP/EPMM coverage targets (ANC 4)",
+ANC05,>=65,"MoH Strategic Plan 2020/21-2024/25 Table 7; AHSPR FY2024/25 Table 33 (anaemia screening at ANC 1)",,,
+ANC09,>=90,"MoH Strategic Plan 2020/21-2024/25 Table 7; AHSPR FY2024/25 Table 33 (IPTp3)",,,
+ANC14,,,>=95,"WHO EMTCT validation guidance 2021, Table 1 (syphilis testing of ANC 1 attendees)",
+ANC15,,,>=95,"WHO EMTCT validation guidance 2021, Table 1 (treatment of seropositive pregnant women)",
+DEL02,>=74,"MoH Strategic Plan 2020/21-2024/25 Table 7; AHSPR FY2024/25 Table 33 (health facility deliveries)",>=90,"ENAP/EPMM coverage targets (skilled birth attendance)",Global target is for skilled attendance at birth
+DEL03,,,5-15,"WHO/UNFPA/UNICEF/AMDD Monitoring emergency obstetric care handbook 2009 (population caesarean rate)",Acceptable range rather than a target
+DEL04,<=4,"MoH Strategic Plan 2020/21-2024/25 Table 7; AHSPR FY2024/25 Table 33 (facility fresh stillbirths per 1,000 deliveries)",,,
+DEL07,<=20,"MoH Strategic Plan 2020/21-2024/25 Table 7; AHSPR FY2024/25 Table 33 (maternal deaths per 100,000 facility deliveries)",,,
+DEL11,,,>=70,"Global Breastfeeding Collective 2030 target (early initiation)",
+DEL12,>=95,"AHSPR FY2024/25 (maternal death notification and review, national target 95%)",,,
+DEL13,>=60,"AHSPR FY2024/25 Table 33 (perinatal deaths reviewed)",,,National target is for review; this indicator measures notification
+PNC01,,,>=80,"ENAP/EPMM coverage targets (postnatal care within 2 days)",Global target is for PNC within 2 days of birth
+EPI03,>=98,"MoH Strategic Plan 2020/21-2024/25 Table 7 (DPT-HepB-Hib 3)",>=90,"Immunization Agenda 2030 (DTP3)",
+EPI04,,,>=90,"Immunization Agenda 2030 (PCV3)",
+EPI07,>=95,"MoH Strategic Plan 2020/21-2024/25 Table 7; AHSPR FY2024/25 Table 33 (measles-rubella 1)",,,
+EPI08,,,>=90,"Immunization Agenda 2030 (MCV2)",
+EPI09,>=98,"MoH Strategic Plan 2020/21-2024/25 Table 7 (children under one fully immunised)",,,
+EPI10,,,<=10,"WHO Immunization in Practice, Module 6 (dropout below 10%)",
+EPI11,,,<=10,"WHO Immunization in Practice, Module 6 (dropout below 10%)",
+EPI12,,,<=10,"WHO Immunization in Practice, Module 6 (dropout below 10%)",
+EPI13,>=90,"AHSPR FY2024/25 Table 33 (girls immunised against cervical cancer)",>=90,"WHO cervical cancer elimination strategy 90-70-90",
+CHN05,,,>=75,"WHO 2017 guideline, preventive chemotherapy for soil-transmitted helminths",
+MAL01,,,>=100,"WHO T3: Test. Treat. Track. (test every suspected case)",
+MAL03,>=90,"Uganda Malaria Reduction and Elimination Strategic Plan 2021-2025 (cases appropriately managed)",>=100,"WHO T3: Test. Treat. Track. (treat every confirmed case)",
+MAL10,<=147,"MoH Strategic Plan 2020/21-2024/25 Table 7; AHSPR FY2024/25 Table 7 (malaria incidence per 1,000)",,,
+HIV04,,,>=95,"UNAIDS 95-95-95 (second 95)",Global target is people diagnosed on treatment; linkage is a close proxy
+HIV06,,,<=5,"WHO EMTCT validation guidance 2021, Table 1 (MTCT rate in breastfeeding populations)",Global target is the final MTCT rate; first PCR positivity is a proxy

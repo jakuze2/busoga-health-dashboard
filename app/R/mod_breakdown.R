@@ -40,7 +40,7 @@ breakdown_server <- function(id) moduleServer(id, function(input, output, sessio
     plot_ly(s, x = ~value, y = ~factor(grp, levels = grp), type = "bar", orientation = "h",
             marker = list(color = col), text = ~sprintf("%s facilities", n_fac), textposition = "none",
             hovertemplate = "%{y}: %{x:,.1f}<br>%{text}<extra></extra>") |>
-      plotly_base(legend = FALSE) |> layout(xaxis = list(title = unit_label(input$ind)), yaxis = list(title = NULL))
+      plotly_base(legend = FALSE) |> layout(xaxis = list(title = unit_label(input$ind)), yaxis = list(title = ""))
   })
   output$grp_trend <- renderPlotly({
     a <- area(); s <- summarise_groups(input$ind, input$set, a$uid, MONTH_MIN, MONTH_MAX, by = "quarter")
@@ -49,7 +49,7 @@ breakdown_server <- function(id) moduleServer(id, function(input, output, sessio
     s[!grp %in% top, grp := "Other"]
     if ("Other" %in% s$grp) s <- s[, .(num = sum(num, na.rm = TRUE), den_sum = sum(den_sum, na.rm = TRUE),
                                        den_mean = mean(den_mean, na.rm = TRUE), n_months = n_months[1]), by = .(code, grp, bucket)][
-      , value := ind_value(code, num, den_sum, den_mean, n_months)]
+      , value := cap_pct(ind_value(code, num, den_sum, den_mean, n_months), code)]
     lv <- c(top, if ("Other" %in% s$grp) "Other")
     p <- plot_ly()
     for (k in seq_along(lv)) p <- p |> add_lines(data = s[grp == lv[k]][order(bucket)], x = ~bucket_date(bucket, "quarter"), y = ~value,
@@ -70,7 +70,7 @@ breakdown_server <- function(id) moduleServer(id, function(input, output, sessio
     plot_ly(x = colnames(zz), y = ind_label(w$code), z = z_scaled, type = "heatmap", text = as.matrix(wl[, -1]),
             texttemplate = "%{text}", hovertemplate = "%{y}<br>%{x}: %{text}<extra></extra>", showscale = FALSE,
             colorscale = list(c(0, "#f4f3ef"), c(1, theme_col(th))), xgap = 2, ygap = 2) |>
-      plotly_base(legend = FALSE) |> layout(yaxis = list(autorange = "reversed", title = NULL), xaxis = list(title = NULL, side = "top"),
+      plotly_base(legend = FALSE) |> layout(yaxis = list(autorange = "reversed", title = ""), xaxis = list(title = "", side = "top"),
                                             margin = list(l = 10))
   })
 
@@ -90,13 +90,13 @@ breakdown_server <- function(id) moduleServer(id, function(input, output, sessio
                  marker = list(color = "#2a78d6"), customdata = ~value, hovertemplate = "Male %{y}: %{customdata:,.0f}<extra></extra>") |>
         add_bars(data = x[sex == "Female"], y = ~factor(age, levels = lv), x = ~value, name = "Female", orientation = "h",
                  marker = list(color = "#eb6834"), hovertemplate = "Female %{y}: %{x:,.0f}<extra></extra>") |>
-        plotly_base() |> layout(barmode = "relative", bargap = .15, yaxis = list(title = NULL),
+        plotly_base() |> layout(barmode = "relative", bargap = .15, yaxis = list(title = ""),
                                 xaxis = list(title = "Number", tickformat = "~s",
                                              tickvals = pretty(c(-max(x$value), max(x$value))),
                                              ticktext = formatC(abs(pretty(c(-max(x$value), max(x$value)))), format = "d", big.mark = ",")))
     } else {
       plot_ly(x, y = ~factor(age, levels = lv), x = ~value, type = "bar", orientation = "h", marker = list(color = BRAND$navy),
-              hovertemplate = "%{y}: %{x:,.0f}<extra></extra>") |> plotly_base(legend = FALSE) |> layout(yaxis = list(title = NULL))
+              hovertemplate = "%{y}: %{x:,.0f}<extra></extra>") |> plotly_base(legend = FALSE) |> layout(yaxis = list(title = ""))
     }
   })
   output$age_trend <- renderPlotly({

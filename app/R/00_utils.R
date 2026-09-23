@@ -105,6 +105,20 @@ ind_value <- function(code, num, den_sum, den_mean, n_months) {
   out
 }
 
+# Coverages above 100% (usually a denominator that is too small, e.g. an under-estimated
+# projected population) are shown as 100%. The uncapped value is kept as `value_raw` and is what
+# the CSV download contains.
+cap_pct <- function(v, code) {
+  u <- IND$unit[match(code, IND$code)]
+  ifelse(!is.na(v) & !is.na(u) & u == "%" & v > 100, 100, v)
+}
+add_cap <- function(s) {
+  if (!nrow(s)) { s[, `:=`(value_raw = numeric(), capped = logical())]; return(s) }
+  s[, value_raw := value][, value := cap_pct(value_raw, code)][, capped := !is.na(value_raw) & value_raw > value]
+  s
+}
+CAP_NOTE <- "Coverages above 100% are shown as 100% (marked *); this usually means the population denominator is under-estimated. The uncapped values are in the CSV download."
+
 bucket_of <- function(period, by) switch(by,
   none    = rep(0L, length(period)),
   month   = period,
@@ -140,7 +154,7 @@ summarise_ind <- function(codes, level, from = DEFAULT_FROM, to = DEFAULT_TO, ui
   s[, value := ind_value(code, num, den_sum, den_mean, n_months)]
   # an incomplete last quarter or year (e.g. Q3 with only July and August) would look like a collapse
   if (by %in% c("quarter", "year")) s <- s[n_months >= (if (by == "quarter") 3L else 12L) | bucket != max(bucket_of(months, by))]
-  s[]
+  add_cap(s)[]
 }
 
 # Aggregate facilities into custom groups (ownership, level, authority) inside an area.
@@ -158,7 +172,7 @@ summarise_groups <- function(codes, set, within = NULL, from = DEFAULT_FROM, to 
              den_mean = mean(den, na.rm = TRUE), n_fac = uniqueN(uid)), by = .(code, grp, bucket)]
   s <- merge(s, nm, by = "bucket")
   s[, value := ind_value(code, num, den_sum, den_mean, n_months)]
-  s[]
+  add_cap(s)[]
 }
 
 # Busoga-wide reference value for the same window
@@ -166,6 +180,64 @@ region_value <- function(codes, from, to) {
   s <- summarise_ind(codes, "region", from, to)
   setNames(s$value, s$code)
 }
+
+# first month with data for each indicator (series added by the July 2025 form revision start late)
+SERIES_START <- IM[, .(start = min(period)), by = code][, setNames(start, code)]
+
+# ---- targets ------------------------------------------------------------------------
+# targets.csv (code, not data): the Uganda national target where one exists, otherwise a global
+# one. ">=56" means at least 56, "<=4" at most 4, "5-15" an acceptable range.
+TGT <- local({
+  t <- fread("targets.csv", na.strings = "", encoding = "UTF-8")
+  t <- t[code %in% IND$code]
+  use_nat <- !is.na(t$national)
+  t[, `:=`(spec = fifelse(use_nat, national, global), source = fifelse(use_nat, national_source, global_source),
+           basis = fifelse(use_nat, "National", "Global"))]
+  t[, op := fifelse(grepl("^>=", spec), ">=", fifelse(grepl("^<=", spec), "<=", "range"))]
+  num <- function(x) suppressWarnings(as.numeric(x))
+  t[, lo := fifelse(op == "range", num(sub("-.*", "", spec)), fifelse(op == ">=", num(sub(">=", "", spec)), NA_real_))]
+  t[, hi := fifelse(op == "range", num(sub(".*-", "", spec)), fifelse(op == "<=", num(sub("<=", "", spec)), NA_real_))]
+  t[]
+})
+has_target <- function(code) code %in% TGT$code
+target_text <- function(code) {
+  i <- match(code, TGT$code); t <- TGT[i]
+  u <- IND$unit[match(code, IND$code)]; suf <- ifelse(u == "%", "%", "")
+  n <- function(x) as.character(x)                  # no padding (format() pads to a common width)
+  out <- ifelse(is.na(i), NA_character_,
+    ifelse(t$op == ">=", sprintf("\u2265 %s%s", n(t$lo), suf),
+    ifelse(t$op == "<=", sprintf("\u2264 %s%s", n(t$hi), suf), sprintf("%s\u2013%s%s", n(t$lo), n(t$hi), suf))))
+  out
+}
+# Population-based rates that are not annualised in DHIS2 (e.g. malaria incidence per 1,000) add
+# up over the months selected; their targets are per year, so compare the annualised value.
+PER_YEAR_TARGET <- IND[area_only == TRUE & annualized == FALSE & unit != "%" & unit != "count", code]
+target_basis_value <- function(v, code, n_months = 12) ifelse(code %in% PER_YEAR_TARGET, v * 12 / n_months, v)
+# "met", "below" (worse than target, for either direction) or NA when there is no target or value
+target_status <- function(v, code, n_months = 12) {
+  v <- target_basis_value(v, code, n_months)
+  i <- match(code, TGT$code); t <- TGT[i]
+  out <- rep(NA_character_, length(v)); ok <- !is.na(i) & !is.na(v)
+  met <- ifelse(t$op == ">=", v >= t$lo - 1e-9, ifelse(t$op == "<=", v <= t$hi + 1e-9, v >= t$lo & v <= t$hi))
+  out[ok] <- ifelse(met[ok], "met", "below")
+  out
+}
+target_value_line <- function(code, monthly = FALSE) {   # a reference value for charts (NA for ranges)
+  i <- match(code, TGT$code); t <- TGT[i]
+  out <- ifelse(is.na(i), NA_real_, ifelse(t$op == ">=", t$lo, ifelse(t$op == "<=", t$hi, NA_real_)))
+  if (monthly) out[code %in% PER_YEAR_TARGET] <- NA_real_       # a yearly target cannot be drawn on monthly values
+  out
+}
+target_chip <- function(v, code, n_months = 12) {
+  if (!has_target(code)) return(NULL)
+  st <- target_status(v, code, n_months); ti <- match(code, TGT$code); t <- TGT[ti]   # index outside [ ] so `code` is the argument
+  cls <- if (is.na(st)) "tgt-chip none" else if (st == "met") "tgt-chip met" else "tgt-chip below"
+  lab <- if (is.na(st)) "" else if (st == "met") "Target met" else if (t$op == "range") "Outside range" else "Below target"
+  span(class = cls, title = sprintf("%s target %s. Source: %s%s", t$basis, target_text(code), t$source,
+                                    if (!is.na(t$note)) paste0(". ", t$note) else ""),
+       sprintf("%s target %s", t$basis, target_text(code)), if (nzchar(lab)) tags$b(paste0(" \u00b7 ", lab)))
+}
+TARGET_NOTE <- "Targets: the Uganda national target (MoH Strategic Plan 2020/21-2024/25 / Annual Health Sector Performance Report 2024/25) where one exists, otherwise a global target (WHO, UNAIDS, Immunization Agenda 2030, ENAP/EPMM). Hover a target for its source."
 
 # ---- formatting --------------------------------------------------------------------
 fmt_val <- function(v, code = NULL, unit = NULL) {
@@ -202,16 +274,19 @@ plotly_base <- function(p, ytitle = NULL, xtitle = NULL, legend = TRUE) {
   p |> layout(
     font = list(family = "Arial, Helvetica, sans-serif", size = 12, color = BRAND$ink2),
     paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)",
-    xaxis = list(title = xtitle, gridcolor = "rgba(0,0,0,0)", linecolor = BRAND$base, zeroline = FALSE,
+    xaxis = list(title = if (is.null(xtitle)) "" else xtitle, gridcolor = "rgba(0,0,0,0)", linecolor = BRAND$base, zeroline = FALSE,
                  tickfont = list(color = BRAND$muted)),
-    yaxis = list(title = ytitle, gridcolor = BRAND$grid, zeroline = FALSE, tickfont = list(color = BRAND$muted),
+    yaxis = list(title = if (is.null(ytitle)) "" else ytitle, gridcolor = BRAND$grid, zeroline = FALSE, tickfont = list(color = BRAND$muted),
                  rangemode = "tozero"),
     hoverlabel = list(bgcolor = "white", bordercolor = BRAND$grid, font = list(color = BRAND$ink)),
     legend = list(orientation = "h", y = -0.18, font = list(size = 11)),
     showlegend = legend, margin = list(l = 10, r = 10, t = 10, b = 10)
-  ) |> config(displaylogo = FALSE, modeBarButtonsToRemove = c("lasso2d", "select2d", "autoScale2d"),
-              toImageButtonOptions = list(format = "png", scale = 2))
+  ) |> config(displaylogo = FALSE, modeBarButtonsToRemove = c("lasso2d", "select2d", "autoScale2d", "toImage"),
+              modeBarButtonsToAdd = list(DL_BUTTON))
 }
+# modebar button: save the whole card (title, chart, area, period and source) as a PNG
+DL_BUTTON <- list(name = "Download as image (with title and source)", icon = htmlwidgets::JS("Plotly.Icons.camera"),
+                  click = htmlwidgets::JS("function(gd){ var c = gd.closest('.card') || gd.parentElement; window.bhfCapture && window.bhfCapture(c); }"))
 
 empty_plot <- function(msg = "No data for this selection") {
   plot_ly() |> layout(xaxis = list(visible = FALSE), yaxis = list(visible = FALSE),

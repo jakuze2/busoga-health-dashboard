@@ -2628,73 +2628,88 @@
       "checksum": "55773d1bb34dc19673942f8eefafa318"
     },
     "R/00_utils.R": {
-      "checksum": "1be50499a9ad7f1ee60b918b784680d2"
+      "checksum": "da19aadaf16b3e6102315acb91e859ac"
     },
     "R/01_inputs.R": {
-      "checksum": "5e47687b8b540007bd4282af2718d77d"
+      "checksum": "6b30b8a1cfa550bc3f39964b8930b098"
     },
     "R/mod_about.R": {
-      "checksum": "720c0023db65932b7510053fec10829b"
+      "checksum": "c474f62d427f0f1da4cf75760d8b5e10"
     },
     "R/mod_atlas.R": {
-      "checksum": "d99124b6fb936bd594232c40bbc0f994"
+      "checksum": "559647d1d3916214dc796277b87aeeca"
     },
     "R/mod_breakdown.R": {
-      "checksum": "a080e896b998b5d2edd624aa5677ce55"
+      "checksum": "003cbba9ba42c6ce87a4d5fbaac83e64"
+    },
+    "R/mod_brief.R": {
+      "checksum": "2e452ec3c53953c729b2c089ccb125f5"
     },
     "R/mod_climate.R": {
-      "checksum": "13298f2993905e0fef9a3d8291c939c6"
+      "checksum": "774aac58e0a57c5a1e2f534ff88bebd0"
     },
     "R/mod_compare.R": {
-      "checksum": "5a7fbbf9306d6e5accc7216b8c7e7ada"
+      "checksum": "c053bfa212ede877bce471991d302009"
     },
     "R/mod_deepdive.R": {
-      "checksum": "cb21895e7c2c210be51cbed630f98823"
+      "checksum": "5c5cffbd888afd313b07ae6e458de707"
     },
     "R/mod_definitions.R": {
-      "checksum": "c154f65391c993ecf47c263add8ae4cd"
+      "checksum": "aa5c9cf27914d4798f67673936a27769"
     },
     "R/mod_download.R": {
-      "checksum": "36d711d0cbb0b653c5b2cbdf14d2faf6"
+      "checksum": "e626245f5d6ba2e8a9d11eeae64cee0f"
     },
     "R/mod_dq.R": {
-      "checksum": "bcbb2062d7ef4016fa7ec4f38069e5f3"
+      "checksum": "9e0901cac4522b51d948108b3139c826"
     },
     "R/mod_drill.R": {
-      "checksum": "18db9ce482fb65b0785ebb234d923a69"
+      "checksum": "ef6459ab3fb398f773ad90cf58fac354"
     },
     "R/mod_epidemic.R": {
-      "checksum": "883affd2824a48eee28b1adf55e01a36"
+      "checksum": "16616ae25b215d4c3ee2a268cf007b3d"
     },
     "R/mod_explorer.R": {
-      "checksum": "0e3486037180cc826a14e54f71e53904"
+      "checksum": "88d9f07a348df1aefe27e54fdb3b104a"
     },
     "R/mod_facilities.R": {
-      "checksum": "cba8a6b4dda48e189cd966877e013e01"
+      "checksum": "6fec5c07b9caedc24735444993b09e0c"
     },
     "R/mod_forecast.R": {
-      "checksum": "61e141200ab82f37ab792e2cf45ad8d1"
+      "checksum": "a853b73897993a0238979af0cc761aed"
     },
     "R/mod_info.R": {
-      "checksum": "126d3e3e071be7c87474c8d59429ccfd"
+      "checksum": "db03ded530e98122566907a9d9a5ca0f"
     },
     "R/mod_maps.R": {
-      "checksum": "5d8d233a8ba7198c2898c13d495f51c4"
+      "checksum": "742f7950ea73f66e9e13b8cd61901091"
     },
     "R/mod_overview.R": {
-      "checksum": "f5a7baa208e134ca93fd6e8d774d60f5"
+      "checksum": "d85e6070fb515131e5b69796cca6e292"
     },
     "R/mod_population.R": {
-      "checksum": "05ae37bd7e3632343a97a27f7052fe86"
+      "checksum": "bbf97653bc86497be841d2e12c13216c"
     },
     "R/mod_region.R": {
-      "checksum": "857fb430908698ec16e86c851c9a5473"
+      "checksum": "9732f7b13779acf8aef8920c7c945f20"
     },
     "R/mod_scorecard.R": {
       "checksum": "d539c631ecf49acecb44a2d01caa6998"
     },
+    "R/mod_targets.R": {
+      "checksum": "26a4dc328bf74568cf7c1d4dc50426d9"
+    },
     "app.R": {
-      "checksum": "e9f8995d3f0b97439d894f33774d0d38"
+      "checksum": "f91184adb5fdf6a9a65176ebca1eca77"
+    },
+    "data_version.txt": {
+      "checksum": "e1fa2c47f02ece3967b41f129c429763"
+    },
+    "targets.csv": {
+      "checksum": "5be6ea827fe0726bf1161ddc2f55f20b"
+    },
+    "www/bhf-download.js": {
+      "checksum": "e965083723be01c35ef5751d67997d44"
     },
     "www/bhf_emblem.png": {
       "checksum": "cee35a895d2a45003455d0eca012f25a"
@@ -2708,8 +2723,11 @@
     "www/favicon.png": {
       "checksum": "b891733e04d6b601c55669f4ef9c9582"
     },
+    "www/html-to-image.min.js": {
+      "checksum": "1b01c7cd9fb375bd1fb395b3dfd31450"
+    },
     "www/styles.css": {
-      "checksum": "7012c0f3ce04652a3d9b7454dd94cfb0"
+      "checksum": "1fcacc079535cd089937c388645fb909"
     }
   },
   "users": null

@@ -13,7 +13,9 @@ run <- function(label, cmd, a = character()) {
   if (st != 0) stop(label, " failed (exit ", st, ")")
 }
 R  <- file.path(R.home("bin"), "Rscript")
-py <- Sys.which(c("python3", "python")); py <- py[nzchar(py)][1]
+py <- Sys.getenv("PYTHON")                   # the GitHub workflow sets this
+if (!nzchar(py)) { py <- Sys.which(c("python3", "python")); py <- unname(py[nzchar(py)][1]) }
+cat("Python:", py, "\n")
 refresh <- if (mode == "full") character() else "--refresh"
 
 if (mode == "full") {
