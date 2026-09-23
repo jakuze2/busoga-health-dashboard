@@ -56,7 +56,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install requests shapely
+      - name: Python packages
+        run: |
+          # run_refresh.R calls whichever python3 is first on PATH: install for every candidate
+          python -m pip install requests shapely
+          python3 -m pip install requests shapely
+          /usr/bin/python3 -m pip install --user --break-system-packages requests shapely || true
+          python3 -c "import requests, shapely; print('python ok:', __import__('sys').executable)"
+          Rscript -e 'cat("R sees:", Sys.which("python3"), "\n")'
       - name: Write credentials
         run: printf 'HMIS_USER=%s\nHMIS_PWD=%s\n' "$HMIS_USER" "$HMIS_PWD" > .Renviron
       - name: Refresh
