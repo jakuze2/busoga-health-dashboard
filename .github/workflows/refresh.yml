@@ -61,7 +61,10 @@ jobs:
           # run_refresh.R calls whichever python3 is first on PATH: install for every candidate
           python -m pip install requests shapely
           python3 -m pip install requests shapely
-          /usr/bin/python3 -m pip install --user --break-system-packages requests shapely || true
+          # the runner's system python3 has no pip: install the packages through apt as well
+          sudo apt-get update -q
+          sudo apt-get install -y -q python3-requests python3-shapely
+          /usr/bin/python3 -c "import requests, shapely; print('system python ok')"
           python3 -c "import requests, shapely; print('python ok:', __import__('sys').executable)"
           Rscript -e 'cat("R sees:", Sys.which("python3"), "\n")'
       - name: Write credentials
