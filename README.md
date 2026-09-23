@@ -8,7 +8,7 @@ forecasting. Built for Busoga Health Forum (busogahealthforum.org).
 
 | Page | What it answers |
 |---|---|
-| Overview | Busoga (or any area) at a glance: one colour-coded block per programme theme |
+| Overview | Busoga (or any area) at a glance: one colour-coded block per programme theme, led by maternal and child mortality; tap a tile to enlarge it (full axes, district comparison, definition) and "See details" to open it in the Indicator explorer |
 | Scorecard | Every district, DLG, sub-county or facility x every indicator, rated against Busoga |
 | Maps | Choropleths from the official DHIS2 district and sub-county boundaries, with rankings |
 | Atlas | All 613 DHIS2 facilities (reporting status, level) with roads, water, schools by level, markets, towns (OpenStreetMap) |
@@ -21,12 +21,14 @@ forecasting. Built for Busoga Health Forum (busogahealthforum.org).
 | Early warning: Forecast | Any indicator, any area or facility, 3 to 12 months ahead with prediction intervals and a back-test |
 | Data quality | Completeness, timeliness, non-reporting facilities, consistency checks, outliers, where to improve |
 | Performance against targets | Every indicator with a Uganda national target (or else a global one) for any area, and a district-by-indicator matrix of who is below target |
-| Brief | A downloadable summary (Word or PDF) for any area, period and set of programmes: key facts, indicators below target, changes, district results, trend charts |
+| AI insights | What drives malaria cases, malaria test positivity, outpatient visits and facility births: a random-forest model with SHAP explanations, written in plain language, checked on unseen months and rebuilt every month |
+| Brief | A designed summary of at most 3 pages (Word or PDF) for any area, period and set of programmes: key facts, key messages, maternal and child mortality, indicators below target, district results, trends, indicator summary, data ownership and contact |
 | Download district data | District and Busoga aggregates only: no facility is identifiable in the file |
 | Indicators & methods | The indicator dictionary and how every number is made |
 
-81 indicators in 8 themes (antenatal care; delivery & newborn; postnatal & family planning;
-immunisation; child health & nutrition; malaria; HIV & PMTCT; services & mortality). Official
+89 indicators in 9 themes (antenatal care; delivery & newborn; postnatal & family planning;
+immunisation; child health & nutrition; malaria; HIV & PMTCT; services & mortality; maternal &
+child mortality). Official
 Ministry of Health DHIS2 indicators are used as defined in DHIS2; a few BHF-defined totals
 are built only from named DHIS2 data elements and are marked as such.
 
@@ -47,6 +49,7 @@ Busoga Health Forum/
     05b_epidemic.R           normal channels, alerts, 4-week predictions
     06_validate.R            compares our values with DHIS2's own indicator results
     07_app_data.R            final app files
+    09_explain.R             models and SHAP values for the AI insights page
   scripts/                   Python helpers (OpenStreetMap layers, Open-Meteo climate)
   data/                      pipeline data (not in this repository, see "Where the data live")
   app/                       the Shiny app (this folder is what Connect Cloud runs)
@@ -127,6 +130,15 @@ the logs. You can also run it by hand from the Actions tab (**Run workflow**, mo
   2020/21-2024/25, Annual Health Sector Performance Report 2024/25) where one exists, otherwise a
   global target (WHO, UNAIDS, Immunization Agenda 2030, ENAP/EPMM). Edit that file to change them.
 - Coverages above 100% are shown as 100% and marked *; the CSV download keeps the uncapped value.
+- Maternal and child mortality (codes MCM01-MCM06 plus the MoH institutional maternal mortality ratio) are facility-based
+  counts and rates from HMIS 105 and 108. Facility-months that are impossible (more deaths than the denominator) or extreme
+  (above 20 and more than 10 times the facility's typical month) are left out and listed in `data/meta/mortality_excluded.csv`.
+- AI insights (`R/09_explain.R`, monthly): one random forest per outcome on sub-county x month data (log scale); inputs are
+  the usual level, last month's level, calendar month, rainfall (this month, 1 and 2 months earlier), SPI-3, maximum
+  temperature (this month and 1 month earlier), hot days and reporting completeness. Accuracy is tested on the last 12
+  months against two simple benchmarks; a factor is called consistent only if it ranks in the top three in at least 4 of 5
+  refits on resampled sub-counties. The results show associations, not causes.
+- Contact for queries (printed on every brief and in the footer): `CONTACT_EMAIL` in `app/R/00_utils.R`.
 
 - Indicator values follow DHIS2: numerators and denominators are summed from facilities upward,
   then divided (pooled, never averaged). A missing operand counts as zero unless all are missing.

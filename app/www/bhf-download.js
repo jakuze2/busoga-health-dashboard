@@ -42,8 +42,9 @@
     f.className = "bhf-dl-foot";
     var ctx = contextOf(node);
     var d = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-    f.innerHTML = (ctx ? "<div>" + ctx.replace(/</g, "&lt;") + "</div>" : "") +
-      "<div>Source: Uganda Ministry of Health DHIS2 (HMIS) and open datasets · Busoga Health Forum Dashboard · downloaded " + d + "</div>";
+    f.innerHTML = '<div class="bhf-dl-brand"><img src="bhf_logo.png" alt="Busoga Health Forum"><span>DASHBOARD</span></div>' +
+      '<div class="bhf-dl-text">' + (ctx ? "<div>" + ctx.replace(/</g, "&lt;") + "</div>" : "") +
+      "<div>Source: Uganda Ministry of Health DHIS2 (HMIS) and open datasets · Busoga Health Forum Dashboard · downloaded " + d + "</div></div>";
     return f;
   }
 

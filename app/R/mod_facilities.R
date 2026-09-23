@@ -42,7 +42,7 @@ facilities_server <- function(id) moduleServer(id, function(input, output, sessi
   output$n <- renderText(sprintf("%d facilities · key figures for %s", nrow(fac()), per()$label))
   output$dir <- renderReactable({
     f <- fac(); p <- per()
-    key <- intersect(c("SRV01", "DEL01", "ANC03", "MAL02", "HIV01"), IND$code)
+    key <- intersect(c("SRV01", "DEL01", "ANC03", "MAL02", "HIV01", "MCM01", "MCM02", "MCM03"), IND$code)
     s <- summarise_ind(key, "facility", p$from, p$to, uids = f$uid)
     w <- if (nrow(s)) dcast(s[, .(uid, code, value)], uid ~ code, value.var = "value") else data.table(uid = character())
     x <- merge(f[, .(uid, Facility = name, Level = flevel, Ownership = grp_ownership, `Sub-county` = subcounty, District = district,

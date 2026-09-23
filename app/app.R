@@ -12,8 +12,10 @@ bhf_theme <- bs_theme(
 nav_icon <- function(name) fontawesome::fa(name, height = "0.95em")
 
 ui <- page_navbar(
-  title = tags$span(tags$img(src = "bhf_logo.png", alt = "Busoga Health Forum"),
-                    tags$span(class = "brand-sub d-none d-xl-block", tags$b("Dashboard"), "Routine health data for Busoga")),
+  title = tags$span(class = "brand-lockup",
+                    tags$span(class = "brand-stack", tags$img(src = "bhf_logo.png", alt = "Busoga Health Forum"),
+                              tags$span(class = "brand-word", "Dashboard")),
+                    tags$span(class = "brand-sub d-none d-xxl-block", "Routine health data", tags$br(), "for Busoga")),
   id = "nav", window_title = "Busoga Health Forum · Dashboard",
   theme = bhf_theme, fillable = FALSE,
   navbar_options = navbar_options(position = "static-top", bg = "#ffffff", theme = "light"),
@@ -21,6 +23,13 @@ ui <- page_navbar(
                      tags$script(src = "html-to-image.min.js"), tags$script(src = "bhf-download.js"),
                      tags$link(rel = "icon", type = "image/png", href = "favicon.png"),
                      tags$meta(name = "viewport", content = "width=device-width, initial-scale=1")),
+  footer = tags$footer(class = "site-footer",
+    div(class = "site-footer-inner",
+        div(class = "brand-stack footer-brand", tags$img(src = "bhf_logo.png", alt = "Busoga Health Forum"), tags$span(class = "brand-word", "Dashboard")),
+        div(class = "site-footer-text",
+            div("Routine health data are the property of the Uganda Ministry of Health (DHIS2, hmis.health.go.ug); open datasets remain the property of their publishers (UBOS, WorldPop, CHIRPS, Copernicus/ECMWF, OpenStreetMap contributors). The Busoga Health Forum compiles and presents them."),
+            div(class = "site-footer-contact", fontawesome::fa("envelope", fill = BRAND$navy, height = ".9em"), " Queries: ",
+                tags$a(href = paste0("mailto:", CONTACT_EMAIL), CONTACT_EMAIL))))),
   nav_panel(tagList(nav_icon("house"), "Overview"), value = "overview", overview_ui("overview")),
   nav_panel(tagList(nav_icon("hospital"), "Facilities"), value = "facilities", facilities_ui("facilities")),
   nav_menu(tagList(nav_icon("chart-column"), "Analyse"),
@@ -38,9 +47,10 @@ ui <- page_navbar(
     nav_panel(tagList(nav_icon("virus"), "Epidemic alerts"), value = "epidemic", epidemic_ui("epidemic")),
     nav_panel(tagList(nav_icon("cloud-sun-rain"), "Climate & environment"), value = "climate", climate_ui("climate")),
     nav_panel(tagList(nav_icon("chart-area"), "Forecast"), value = "forecast", forecast_ui("forecast"))),
-  nav_menu(tagList(nav_icon("people-group"), "Busoga"),
-    nav_panel(tagList(nav_icon("people-group"), "Population & education"), value = "population", population_ui("population")),
-    nav_panel(tagList(nav_icon("chart-pie"), "Busoga in numbers: census, access, farming, commerce"), value = "region", region_ui("region"))),
+  nav_panel(tagList(nav_icon("wand-magic-sparkles"), "AI insights"), value = "xai", xai_ui("xai")),
+  nav_menu(tagList(nav_icon("map-location-dot"), "Busoga profile"),
+    nav_panel(tagList(nav_icon("people-group"), "People: population, age and schools"), value = "population", population_ui("population")),
+    nav_panel(tagList(nav_icon("chart-pie"), "Place: census history, access, farming and trade"), value = "region", region_ui("region"))),
   nav_panel(tagList(nav_icon("clipboard-check"), "Data quality"), value = "dq", dq_ui("dq")),
   nav_panel(tagList(nav_icon("file-lines"), "Brief"), value = "brief", brief_ui("brief")),
   nav_panel(tagList(nav_icon("circle-info"), "About"), value = "info", info_ui("info")),
@@ -70,6 +80,7 @@ server <- function(input, output, session) {
   epidemic_server("epidemic")
   climate_server("climate")
   forecast_server("forecast")
+  xai_server("xai")
   population_server("population")
   region_server("region")
   dq_server("dq")

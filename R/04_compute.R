@@ -100,6 +100,25 @@ for (i in seq_len(nrow(defs))) {
 }
 fm <- rbindlist(res, use.names = TRUE)
 fm <- fm[!(is.na(num) & is.na(den))]
+
+# Mortality indicators (MCM*) rest on small counts, so a single mistyped entry (e.g. 355 under-5
+# deaths at a health centre II in one month, or more ward deaths than admissions) would dominate
+# Busoga's figure. Facility-months that are impossible (deaths above the denominator) or extreme
+# (above 20 and more than 10 times the facility's typical month) are left out and listed in
+# data/meta/mortality_excluded.csv.
+mcm <- fm[code %like% "^MCM"]
+if (nrow(mcm)) {
+  # the facility's typical month: median of its other non-zero months (1 when it has none)
+  mcm[, med := vapply(seq_len(.N), function(k) { z <- num[-k]; z <- z[!is.na(z) & z > 0]
+                                                   if (length(z)) as.numeric(median(z)) else 1 }, 0), by = .(code, uid)]
+  bad <- mcm[!is.na(num) & ((defs$factor[match(code, defs$code)] > 1 & !is.na(den) & num > den) |
+                            (num > 20 & num > 10 * med))]
+  if (nrow(bad)) {
+    fwrite(bad[, .(code, uid, period, num, den, facility_median = med)], "data/meta/mortality_excluded.csv")
+    fm <- fm[!bad, on = .(code, uid, period)]
+    log_msg("mortality: left out %d implausible facility-months (data/meta/mortality_excluded.csv)", nrow(bad))
+  }
+}
 log_msg("facility-month indicator rows: %s", format(nrow(fm), big.mark = ","))
 
 # ---- aggregate to areas -------------------------------------------------------------

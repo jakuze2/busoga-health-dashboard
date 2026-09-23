@@ -49,5 +49,6 @@ if (mode == "full") {
   if (!is.na(py)) run_py("OpenStreetMap commerce", c("scripts/fetch_context_layers.py", "commerce"))
 }
 run("App data", R, "R/07_app_data.R")
+if (mode %in% c("full", "monthly")) run("Explainable AI (drivers of the monthly figures)", R, "R/09_explain.R")
 if (mode == "full") run("Open data: census history, access, hazards, food prices, commerce", R, "R/08_open_data.R")
 cat("\nDone. Check locally with shiny::runApp('app'), then push to GitHub.\n")

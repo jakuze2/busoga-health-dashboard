@@ -52,7 +52,7 @@ jobs:
           use-public-rspm: true
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          packages: any::httr2, any::jsonlite, any::data.table, any::sf, any::terra, any::readxl
+          packages: any::httr2, any::jsonlite, any::data.table, any::sf, any::terra, any::readxl, any::ranger
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"

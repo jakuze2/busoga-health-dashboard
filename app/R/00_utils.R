@@ -14,12 +14,12 @@ BRAND <- list(navy = "#201B6D", maroon = "#75002C", navy_soft = "#E9E8F4", maroo
 # one fixed hue per programme theme (validated categorical palette, fixed order)
 THEMES <- data.table(
   theme = c("Antenatal care", "Delivery & newborn", "Postnatal & family planning", "Immunisation",
-            "Child health & nutrition", "Malaria", "HIV & PMTCT", "Services & mortality"),
+            "Child health & nutrition", "Malaria", "HIV & PMTCT", "Services & mortality", "Maternal & child mortality"),
   # brand-led palette (navy, maroon, teal, gold, plum, forest, indigo, terracotta); passes the
   # lightness, chroma, colour-blind and normal-vision separation checks on white
-  color = c("#3949AB", "#A3214A", "#00897B", "#C17D11", "#8E44AD", "#2E7D32", "#5C6BC0", "#C0582B"),
+  color = c("#3949AB", "#A3214A", "#00897B", "#C17D11", "#8E44AD", "#2E7D32", "#5C6BC0", "#C0582B", "#37474F"),
   icon  = c("person-pregnant", "baby", "people-roof", "syringe", "child-reaching", "mosquito",
-            "ribbon", "hospital"))
+            "ribbon", "hospital", "heart-pulse"))
 theme_col  <- function(th) THEMES$color[match(th, THEMES$theme)]
 theme_icon <- function(th) THEMES$icon[match(th, THEMES$theme)]
 
@@ -237,6 +237,15 @@ target_chip <- function(v, code, n_months = 12) {
                                     if (!is.na(t$note)) paste0(". ", t$note) else ""),
        sprintf("%s target %s", t$basis, target_text(code)), if (nzchar(lab)) tags$b(paste0(" \u00b7 ", lab)))
 }
+# contact for queries and the data statement printed on briefs and downloads
+CONTACT_EMAIL <- "Joseph.Akuze@mail.huji.ac.il"
+DATA_STATEMENT <- paste(
+  "Data ownership: routine health data are the property of the Uganda Ministry of Health and are reported by health facilities",
+  "through the national Health Management Information System (DHIS2, hmis.health.go.ug). Open datasets remain the property of",
+  "their publishers and are used under their licences: population from the Uganda Bureau of Statistics (UBOS) and WorldPop;",
+  "rainfall from CHIRPS (Climate Hazards Center, UC Santa Barbara); temperature and air quality from ERA5-Land and CAMS",
+  "(Copernicus / ECMWF); places from OpenStreetMap contributors (ODbL). The Busoga Health Forum compiles and presents these",
+  "data; figures can change as facilities submit late reports.")
 TARGET_NOTE <- "Targets: the Uganda national target (MoH Strategic Plan 2020/21-2024/25 / Annual Health Sector Performance Report 2024/25) where one exists, otherwise a global target (WHO, UNAIDS, Immunization Agenda 2030, ENAP/EPMM). Hover a target for its source."
 
 # ---- formatting --------------------------------------------------------------------
