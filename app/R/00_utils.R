@@ -238,7 +238,9 @@ target_chip <- function(v, code, n_months = 12) {
        sprintf("%s target %s", t$basis, target_text(code)), if (nzchar(lab)) tags$b(paste0(" \u00b7 ", lab)))
 }
 # contact for queries and the data statement printed on briefs and downloads
-CONTACT_EMAIL <- "Joseph.Akuze@mail.huji.ac.il"
+CONTACT_NAME  <- "Dr Akuze Joseph"
+CONTACT_EMAIL <- "jakuze@musph.ac.ug"
+CONTACT <- sprintf("%s (%s)", CONTACT_NAME, CONTACT_EMAIL)
 DATA_STATEMENT <- paste(
   "Data ownership: routine health data are the property of the Uganda Ministry of Health and are reported by health facilities",
   "through the national Health Management Information System (DHIS2, hmis.health.go.ug). Open datasets remain the property of",

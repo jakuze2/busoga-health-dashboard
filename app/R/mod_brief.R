@@ -244,7 +244,7 @@ write_brief_docx <- function(b, file) {
           small(paste(sprintf("The summary lists headline indicators; all %d indicators, with district and facility results, are in the dashboard (* = shown capped at 100%%).", nrow(b$ind)),
                       DATA_STATEMENT, paste(BRIEF_NOTES, collapse = " "),
                       "Targets: Uganda national target (MoH Strategic Plan 2020/21-2024/25; AHSPR 2024/25) where one exists, otherwise a global target.",
-                      sprintf("**For queries about this brief or the dashboard, contact %s.**", CONTACT_EMAIL))))
+                      sprintf("**For queries about this brief or the dashboard, contact %s.**", CONTACT))))
   mdf <- file.path(dir, "brief.md"); writeLines(md, mdf, useBytes = TRUE)
   ref <- normalizePath("brief_reference.docx", mustWork = FALSE)
   owd <- setwd(dir); on.exit(setwd(owd), add = TRUE)
@@ -277,7 +277,7 @@ write_brief_pdf <- function(b, file) {
   footer <- function() {
     grid::grid.lines(u(c(L, R)), u(c(0.55, 0.55)), gp = gp(col = "#e1e0d9", lwd = 0.6))
     text(sprintf("Busoga Health Forum · Health brief · %s · %s", b$area$name, b$period$label), L, 0.47, 6.5, col = MUTED)
-    text(sprintf("Queries: %s", CONTACT_EMAIL), L, 0.33, 6.5, col = MUTED)
+    text(sprintf("Queries: %s", CONTACT), L, 0.33, 6.5, col = MUTED)
     text(sprintf("Page %d", page), R, 0.47, 6.5, col = MUTED, just = c("right", "top"))
   }
   newpage <- function(title = NULL) {
@@ -458,7 +458,7 @@ write_brief_pdf <- function(b, file) {
   y <- y - 0.1
   text("About the data", L + 0.12, y, 8, TRUE, NAVY); y <- y - 0.17
   for (w in about) { text(w, L + 0.12, y, 6.3, col = INK2); y <- y - 6.3 * 1.3 / 72 }
-  text(sprintf("For queries about this brief or the dashboard, contact %s.", CONTACT_EMAIL), L + 0.12, y - 0.03, 6.8, TRUE, NAVY)
+  text(sprintf("For queries about this brief or the dashboard, contact %s.", CONTACT), L + 0.12, y - 0.03, 6.8, TRUE, NAVY)
   footer()
   invisible(file)
 }

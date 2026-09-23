@@ -138,7 +138,7 @@ the logs. You can also run it by hand from the Actions tab (**Run workflow**, mo
   temperature (this month and 1 month earlier), hot days and reporting completeness. Accuracy is tested on the last 12
   months against two simple benchmarks; a factor is called consistent only if it ranks in the top three in at least 4 of 5
   refits on resampled sub-counties. The results show associations, not causes.
-- Contact for queries (printed on every brief and in the footer): `CONTACT_EMAIL` in `app/R/00_utils.R`.
+- Contact for queries (printed on every brief and in the footer): `CONTACT_NAME` and `CONTACT_EMAIL` in `app/R/00_utils.R`.
 
 - Indicator values follow DHIS2: numerators and denominators are summed from facilities upward,
   then divided (pooled, never averaged). A missing operand counts as zero unless all are missing.
