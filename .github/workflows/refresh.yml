@@ -58,19 +58,17 @@ jobs:
           python-version: "3.12"
       - name: Python packages
         run: |
-          # run_refresh.R calls whichever python3 is first on PATH: install for every candidate
-          python -m pip install requests shapely
           python3 -m pip install requests shapely
-          # the runner's system python3 has no pip: install the packages through apt as well
-          sudo apt-get update -q
-          sudo apt-get install -y -q python3-requests python3-shapely
-          /usr/bin/python3 -c "import requests, shapely; print('system python ok')"
           python3 -c "import requests, shapely; print('python ok:', __import__('sys').executable)"
-          Rscript -e 'cat("R sees:", Sys.which("python3"), "\n")'
+          # run_refresh.R uses exactly this interpreter
+          echo "PYTHON=$(python3 -c 'import sys; print(sys.executable)')" >> "$GITHUB_ENV"
       - name: Write credentials
         run: printf 'HMIS_USER=%s\nHMIS_PWD=%s\n' "$HMIS_USER" "$HMIS_PWD" > .Renviron
       - name: Refresh
-        run: Rscript run_refresh.R --$MODE
+        run: |
+          echo "Python for the refresh: $PYTHON"
+          "$PYTHON" -c "import requests, shapely"
+          Rscript run_refresh.R --$MODE
       - name: Push the refreshed data to the private repository
         run: |
           rm -f .Renviron
