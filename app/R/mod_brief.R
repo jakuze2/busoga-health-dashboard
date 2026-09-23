@@ -19,6 +19,7 @@ brief_facts <- function(a, p) {
 brief_data <- function(a, p, themes) {
   codes <- IND[theme %in% themes & is.na(ended) & (a$level != "facility" | area_only == FALSE), code]
   cur <- summarise_ind(codes, a$level, p$from, p$to, uids = a$uid)
+  if (!"value_raw" %in% names(cur)) cur[, `:=`(value_raw = value, capped = rep(FALSE, .N))]   # no data for this unit
   pw <- previous_window(p$from, p$to)
   prev <- if (!is.null(pw)) summarise_ind(codes, a$level, pw[1], pw[2], uids = a$uid) else data.table(code = character(), value = numeric())
   d <- data.table(code = codes)
