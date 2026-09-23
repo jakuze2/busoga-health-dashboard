@@ -172,7 +172,8 @@ brief_trend_plot <- function(b) {
   tr <- b$trend[code %in% b$pick & is.finite(value)][order(code, bucket)]
   if (!nrow(tr)) return(NULL)
   tr[, date := ym_date(bucket)]
-  tr[, panel := factor(sprintf("%s (%s)", ind_label(code), unit_label(code)), sprintf("%s (%s)", ind_label(b$pick), unit_label(b$pick)))]
+  lab_of <- function(cd) { x <- sprintf("%s (%s)", ind_label(cd), unit_label(cd)); if (isTRUE(b$plain_text)) enc2utf8(iconv(pdf_text(x), "latin1", "UTF-8")) else x }
+  tr[, panel := factor(lab_of(code), unique(lab_of(b$pick)))]
   tr[, col := theme_col(as.character(IND$theme[match(code, IND$code)]))]
   tg <- unique(tr[, .(code, panel)])[, tv := vapply(code, target_value_line, 0, monthly = TRUE)][is.finite(tv)]
   ggplot2::ggplot(tr, ggplot2::aes(date, value)) +
@@ -255,13 +256,37 @@ write_brief_docx <- function(b, file) {
 }
 
 # ---- PDF (grid graphics, A4, at most 3 pages) --------------------------------------------------
+# characters outside Latin-1 (the standard PDF fonts) replaced with plain equivalents
+pdf_text <- function(x) {
+  x <- gsub("\u2265", ">=", x); x <- gsub("\u2264", "<=", x); x <- gsub("[\u2013\u2014]", "-", x)
+  x <- gsub("\u2026", "...", x); x <- gsub("\u25b2", "+", x); x <- gsub("\u25bc", "-", x); x <- gsub("\u2021", "", x)
+  x <- gsub("[\u2018\u2019]", "'", x); x <- gsub("[\u201c\u201d]", '"', x); x <- gsub("\u00b2", "2", x)
+  iconv(x, "UTF-8", "latin1", sub = "?")
+}
+pdf_text_dt <- function(d) { if (!is.data.frame(d)) return(d); d <- copy(d)
+  for (cc in names(d)) if (is.character(d[[cc]])) set(d, j = cc, value = enc2utf8(iconv(pdf_text(d[[cc]]), "latin1", "UTF-8")))
+  else if (is.factor(d[[cc]])) set(d, j = cc, value = factor(d[[cc]], levels = levels(d[[cc]]), labels = iconv(pdf_text(levels(d[[cc]])), "latin1", "UTF-8")))
+  d }
+
+# PDF brief: drawn with the standard PDF device (Helvetica), then protected against editing with
+# the owner password in the BHF_BRIEF_PASSWORD environment variable (a random one if it is not set,
+# so the file can never be edited). Anyone can open and print it.
 write_brief_pdf <- function(b, file) {
+  b[] <- lapply(b, pdf_text_dt); b$plain_text <- TRUE; b$area$name <- enc2utf8(iconv(pdf_text(b$area$name), "latin1", "UTF-8"))
+  b$period$label <- enc2utf8(iconv(pdf_text(b$period$label), "latin1", "UTF-8"))
+  draw_brief_pdf(b, file)
+  pw <- Sys.getenv("BHF_BRIEF_PASSWORD")
+  if (!nzchar(pw)) pw <- paste(sample(c(letters, LETTERS, 0:9), 24, TRUE), collapse = "")
+  tryCatch(pdf_protect(file, pw), error = function(e) message("PDF protection skipped: ", conditionMessage(e)))
+  invisible(file)
+}
+
+draw_brief_pdf <- function(b, file) {
   W <- 8.27; H <- 11.69; L <- 0.55; R <- W - 0.55; CW <- R - L
-  cairo <- capabilities("cairo")
-  if (cairo) grDevices::cairo_pdf(file, width = W, height = H, onefile = TRUE, family = "sans")
-  else grDevices::pdf(file, width = W, height = H, encoding = "ISOLatin1")
+  grDevices::pdf(file, width = W, height = H, encoding = "ISOLatin1", family = "Helvetica", useDingbats = FALSE,
+                 title = pdf_text(sprintf("Health brief: %s", b$area$name)))
   on.exit(grDevices::dev.off(), add = TRUE)
-  txt <- if (cairo) identity else function(x) chartr("≥≤–·°", "><-.o", x)
+  txt <- function(x) enc2utf8(iconv(pdf_text(x), "latin1", "UTF-8"))
   u <- function(x) grid::unit(x, "in")
   gp <- grid::gpar
   NAVY <- BRAND$navy; MAROON <- BRAND$maroon; INK2 <- BRAND$ink2; MUTED <- BRAND$muted
@@ -468,22 +493,48 @@ brief_ui <- function(id) {
   ns <- NS(id)
   tagList(
     page_head("Reports", "Download a brief",
-              "A short summary for any area and period: key facts, indicators below target, changes since the previous period, district results and trend charts. Choose the area, period and programmes, then download it as Word or PDF."),
+              "A designed summary of up to three pages for Busoga, any district, DLG, sub-county or single facility, and any period: key facts, key messages, maternal and child mortality, indicators below target, trends and an indicator summary."),
     filter_bar(area_ui(ns("area"), depth = 4), period_ui(ns("period"))),
     layout_columns(col_widths = c(4, 8),
       card(card_header("Brief settings"),
            selectInput(ns("themes"), "Programme themes", THEMES$theme, selected = THEMES$theme, multiple = TRUE),
-           radioButtons(ns("fmt"), "Format", c("Word (.docx)" = "docx", "PDF" = "pdf"), inline = TRUE),
-           downloadButton(ns("dl"), "Download brief", class = "btn-primary w-100 mt-2"),
-           info_note("The brief uses exactly what is selected on this page. Word files can be edited before sharing.")),
+           radioButtons(ns("fmt"), "Format", c("PDF (read-only)" = "pdf", "Word (editable)" = "docx"), selected = "pdf", inline = TRUE),
+           conditionalPanel(sprintf("input['%s'] == 'docx'", ns("fmt")),
+             div(class = "brief-lock",
+                 div(class = "brief-lock-head", fontawesome::fa("lock", fill = BRAND$navy, height = ".95em"), " Word export is password protected"),
+                 uiOutput(ns("lock")))),
+           uiOutput(ns("dl_ui")),
+           info_note("PDF briefs can be opened and printed by anyone but not edited. Editable Word copies are for Busoga Health Forum staff.")),
       card(full_screen = TRUE, card_header("Preview", span(class = "sub", textOutput(ns("sub"), inline = TRUE))),
            uiOutput(ns("preview"))))
   )
 }
 
 brief_server <- function(id) moduleServer(id, function(input, output, session) {
+  ns <- session$ns
   area <- area_server("area"); per <- period_server("period")
   b <- reactive({ req(length(input$themes) > 0); brief_data(area(), per(), input$themes) })
+  unlocked <- reactiveVal(FALSE)
+  word_on <- nzchar(Sys.getenv("BHF_BRIEF_PASSWORD"))
+  output$lock <- renderUI({
+    if (!word_on) return(p(class = "muted", "Word export is not switched on for this dashboard."))
+    if (unlocked()) return(div(class = "brief-unlocked", fontawesome::fa("lock-open", fill = "#1b6e3a", height = ".95em"), " Unlocked for this session"))
+    tagList(div(class = "brief-lock-row", passwordInput(ns("pw"), NULL, placeholder = "Password", width = "100%"),
+                actionButton(ns("unlock"), "Unlock", class = "btn-outline-primary")),
+            uiOutput(ns("lock_msg")))
+  })
+  tries <- reactiveVal(0L)
+  observeEvent(input$unlock, {
+    tries(tries() + 1L)
+    if (tries() > 5L) { output$lock_msg <- renderUI(div(class = "brief-lock-err", "Too many attempts. Reload the page to try again.")); return() }
+    if (identical(input$pw, Sys.getenv("BHF_BRIEF_PASSWORD"))) unlocked(TRUE)
+    else output$lock_msg <- renderUI(div(class = "brief-lock-err", "That password is not correct."))
+  })
+  output$dl_ui <- renderUI({
+    if (identical(input$fmt, "docx") && !unlocked())
+      return(tags$button(class = "btn btn-secondary w-100 mt-2", disabled = NA, fontawesome::fa("lock", fill = "#fff", height = ".9em"), " Unlock to download Word"))
+    downloadButton(ns("dl"), if (identical(input$fmt, "docx")) "Download Word brief" else "Download PDF brief", class = "btn-primary w-100 mt-2")
+  })
   output$sub <- renderText(sprintf("%s · %s", area()$name, per()$label))
   output$preview <- renderUI({
     x <- b(); below <- x$ind[status == "below"]
@@ -494,15 +545,15 @@ brief_server <- function(id) moduleServer(id, function(input, output, session) {
         tags$table(class = "table table-sm", tags$thead(tags$tr(tags$th("Indicator"), tags$th("Value"), tags$th("Target"))),
           tags$tbody(lapply(seq_len(nrow(below)), function(i) tags$tr(tags$td(below$indicator[i]),
             tags$td(fmt_val(below$value[i], below$code[i])), tags$td(below$target[i])))))),
-      p(class = "muted", sprintf("The download adds key facts, a table for each of the %d selected themes%s and up to %d trend charts.",
-                                 length(input$themes), if (!is.null(x$dist)) ", districts below target" else "", length(x$pick))))
+      p(class = "muted", "The download adds key facts, maternal and child mortality, a chart of the gaps to target, trends and an indicator summary, in at most three pages."))
   })
   output$dl <- downloadHandler(
-    filename = function() sprintf("BHF_brief_%s_%s.%s", gsub("[^A-Za-z0-9]+", "_", area()$name), format(Sys.Date(), "%Y%m%d"), input$fmt),
+    filename = function() sprintf("BHF_brief_%s_%s.%s", gsub("[^A-Za-z0-9]+", "_", area()$name), format(Sys.Date(), "%Y%m%d"),
+                                  if (identical(input$fmt, "docx") && unlocked()) "docx" else "pdf"),
     content = function(file) {
       x <- b()
       withProgress(message = "Preparing the brief", value = 0.3, {
-        if (input$fmt == "docx") write_brief_docx(x, file) else write_brief_pdf(x, file)
+        if (identical(input$fmt, "docx") && unlocked()) write_brief_docx(x, file) else write_brief_pdf(x, file)
       })
     })
 })

@@ -2631,7 +2631,7 @@
       "checksum": "b859d35a9d40156ed73aa1f084ca0b21"
     },
     "R/01_inputs.R": {
-      "checksum": "6b30b8a1cfa550bc3f39964b8930b098"
+      "checksum": "9cf510c97f6d18b1b4f1073220c97eb2"
     },
     "R/mod_about.R": {
       "checksum": "720c0023db65932b7510053fec10829b"
@@ -2643,7 +2643,7 @@
       "checksum": "003cbba9ba42c6ce87a4d5fbaac83e64"
     },
     "R/mod_brief.R": {
-      "checksum": "b7e46550523d7a8fbf1139e2d28dcb9a"
+      "checksum": "869e7fb14daa5ffda2fc55dc2b23e06f"
     },
     "R/mod_climate.R": {
       "checksum": "774aac58e0a57c5a1e2f534ff88bebd0"
@@ -2709,7 +2709,7 @@
       "checksum": "5be6ea827fe0726bf1161ddc2f55f20b"
     },
     "www/bhf-download.js": {
-      "checksum": "33c5cbaad3ebac196fa95bd8488cc8ca"
+      "checksum": "559606d92c4073692b71cadd407669fa"
     },
     "www/bhf_emblem.png": {
       "checksum": "cee35a895d2a45003455d0eca012f25a"
@@ -2727,13 +2727,16 @@
       "checksum": "1b01c7cd9fb375bd1fb395b3dfd31450"
     },
     "www/styles.css": {
-      "checksum": "d53194b66d12a1d5548f6f9cb6f26b6c"
+      "checksum": "cb123d74b926ad33849037e0eb1b663d"
     },
     "R/mod_xai.R": {
       "checksum": "96fbe68a910cec470965e767ebdf6f75"
     },
     "brief_reference.docx": {
       "checksum": "87a6a3acf4e60687473661733577ece1"
+    },
+    "R/02_pdf_protect.R": {
+      "checksum": "e7f4605f19d93b0aed232c1501101bbd"
     }
   },
   "users": null

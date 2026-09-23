@@ -24,15 +24,22 @@ resolve_period <- function(preset, from = NULL, to = NULL) {
 
 month_choices <- setNames(rev(MONTHS), fmt_month(rev(MONTHS)))
 
+# Period slicer: one row of buttons (the latest 12 months by default); earlier years and any
+# other range through "Custom".
+period_slicer_choices <- function() {
+  yrs <- rev(unique(MONTHS %/% 100L)); last <- MONTH_MAX
+  c(setNames("last3", "Last 3 months"), setNames("last12", "Last 12 months"),
+    setNames(paste0("y", yrs[1]), sprintf("%d so far", yrs[1])),
+    setNames(paste0("y", yrs[2:min(4, length(yrs))]), yrs[2:min(4, length(yrs))]),
+    setNames("all", "All years"), setNames("custom", "Custom"))
+}
 period_ui <- function(id, label = "Period", selected = "last12") {
   ns <- NS(id)
-  tagList(
-    selectInput(ns("preset"), label, period_presets(), selected = selected, width = "260px"),
-    conditionalPanel(sprintf("input['%s'] == 'custom'", ns("preset")),
-      div(style = "display:flex;gap:.5rem;",
-          selectInput(ns("from"), "From", month_choices, selected = DEFAULT_FROM, width = "130px"),
-          selectInput(ns("to"), "To", month_choices, selected = MONTH_MAX, width = "130px")))
-  )
+  div(class = "period-slicer",
+    radioButtons(ns("preset"), label, period_slicer_choices(), selected = selected, inline = TRUE),
+    conditionalPanel(sprintf("input['%s'] == 'custom'", ns("preset")), class = "period-custom",
+      selectInput(ns("from"), "From", month_choices, selected = DEFAULT_FROM, width = "130px"),
+      selectInput(ns("to"), "To", month_choices, selected = MONTH_MAX, width = "130px")))
 }
 period_server <- function(id) moduleServer(id, function(input, output, session) {
   reactive({
@@ -101,7 +108,20 @@ children_of <- function(uid) {
 
 filter_bar <- function(...) div(class = "filter-bar", ...)
 page_head <- function(eyebrow, title, text = NULL, right = NULL)
-  div(class = "page-head", div(div(class = "eyebrow", eyebrow), h2(title), if (!is.null(text)) p(text)), right)
+  div(class = "page-head", div(class = "page-head-text", div(class = "eyebrow", eyebrow), h2(title), if (!is.null(text)) p(text)),
+      if (is.null(right)) data_status() else right)
+
+# "what data am I looking at" panel shown at the right of every page header
+data_status <- function() {
+  nfac <- nrow(OU[level_name == "facility"]); nd <- nrow(OU[level_name == "district"])
+  item <- function(icon, lab, val) div(class = "ds-item", span(class = "ds-icon", fontawesome::fa(icon, fill = "#201B6D", height = "1em")),
+                                       div(div(class = "ds-lab", lab), div(class = "ds-val", val)))
+  div(class = "data-status",
+      item("calendar-check", "Latest month of data", format(ym_date(MONTH_MAX), "%B %Y")),
+      item("rotate", "Last updated", META$extracted),
+      item("hospital", "Coverage", sprintf("%s facilities, %d districts and cities", format(nfac, big.mark = ","), nd)),
+      item("database", "Source", "Ministry of Health DHIS2 (HMIS)"))
+}
 
 # Mini area chart for KPI tiles: gradient fill, y-axis min/max labels, first/last month on the
 # x-axis, the latest point marked, optional dotted reference (e.g. Busoga). Inline SVG, so a page

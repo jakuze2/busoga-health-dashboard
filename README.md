@@ -139,6 +139,11 @@ the logs. You can also run it by hand from the Actions tab (**Run workflow**, mo
   months against two simple benchmarks; a factor is called consistent only if it ranks in the top three in at least 4 of 5
   refits on resampled sub-counties. The results show associations, not causes.
 - Contact for queries (printed on every brief and in the footer): `CONTACT_NAME` and `CONTACT_EMAIL` in `app/R/00_utils.R`.
+- Briefs: PDF by default, protected against editing (open and print only). The owner password, which also unlocks the
+  editable Word export on the Brief page, is read from the Connect Cloud secret variable `BHF_BRIEF_PASSWORD`; it is never
+  stored in this repository. Without the variable, PDFs are locked with a random password and Word export is off.
+- Every page header shows the latest month of data, the last update, coverage and source; periods are chosen with a
+  one-click slicer (last 3 or 12 months, year so far, recent years, all years or a custom range).
 
 - Indicator values follow DHIS2: numerators and denominators are summed from facilities upward,
   then divided (pooled, never averaged). A missing operand counts as zero unless all are missing.

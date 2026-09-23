@@ -27,6 +27,8 @@
       if (g.offsetParent === null) return;                       // hidden (e.g. custom dates not in use)
       var l = g.querySelector("label");
       var lab = l ? (l.textContent || "").replace(/\s+/g, " ").trim() : ""; var sel = g.querySelector("select");
+      var rad = g.querySelector("input[type=radio]:checked");
+      if (lab && rad) { var rv = text(rad.parentNode.querySelector("span")); if (rv && rv !== "Custom") parts.push(lab + ": " + rv); return; }
       if (!lab || !sel || sel.selectedIndex < 0) return;
       var v = text(sel.options[sel.selectedIndex]);
       if (!v || v === "All" || v === "Custom range...") return;
