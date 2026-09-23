@@ -62,6 +62,7 @@ jobs:
           python3 -c "import requests, shapely; print('python ok:', __import__('sys').executable)"
           # run_refresh.R uses exactly this interpreter
           echo "PYTHON=$(python3 -c 'import sys; print(sys.executable)')" >> "$GITHUB_ENV"
+          echo "PYTHON_SITE=$(python3 -c 'import site; print(site.getsitepackages()[0])')" >> "$GITHUB_ENV"
       - name: Write credentials
         run: printf 'HMIS_USER=%s\nHMIS_PWD=%s\n' "$HMIS_USER" "$HMIS_PWD" > .Renviron
       - name: Refresh
