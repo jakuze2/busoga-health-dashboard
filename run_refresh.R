@@ -16,6 +16,9 @@ R  <- file.path(R.home("bin"), "Rscript")
 py <- Sys.getenv("PYTHON")                   # the GitHub workflow sets this
 if (!nzchar(py)) { py <- Sys.which(c("python3", "python")); py <- unname(py[nzchar(py)][1]) }
 cat("Python:", py, "\n")
+# R can pass Python settings to child processes; clear them so python uses its own packages
+Sys.unsetenv(c("PYTHONPATH", "PYTHONHOME", "PYTHONNOUSERSITE"))
+if (!is.na(py) && nzchar(py)) system2(py, c("-c", shQuote("import sys, os; print(sys.executable); print(sys.path); print({k: v for k, v in os.environ.items() if k.startswith(('PYTHON', 'HOME', 'R_', 'VIRTUAL'))})")))
 refresh <- if (mode == "full") character() else "--refresh"
 
 if (mode == "full") {
