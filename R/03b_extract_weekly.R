@@ -46,17 +46,40 @@ recent <- tail(weeks, 12)
 des <- unique(c(EPI_DE$cases, EPI_DE$deaths[nzchar(EPI_DE$deaths)], other))
 ou_sc <- paste0("ou:", cfg$region_uid, ";LEVEL-", cfg$levels[["facility"]])
 
+# One year of weekly values. A pull that comes back empty (DHIS2 can answer 200 with no rows when it
+# is busy) is retried; if it stays empty the existing file is KEPT and the run fails loudly, so a
+# silent gap can never replace good data.
+pull_year <- function(wk) {
+  for (try in 1:3) {
+    dt <- rbindlist(lapply(chunk(des, 25), function(ch)
+      d2_analytics(c(paste0("dx:", paste(ch, collapse = ";")), paste0("pe:", paste(wk, collapse = ";")), ou_sc))), fill = TRUE)
+    rr <- d2_analytics(c(paste0("dx:C4oUitImBPK.REPORTING_RATE;C4oUitImBPK.ACTUAL_REPORTS;C4oUitImBPK.EXPECTED_REPORTS"),
+                         paste0("pe:", paste(wk, collapse = ";")), ou_sc))
+    if (nrow(dt) && nrow(rr)) return(list(values = dt, reporting = rr))
+    log_msg("empty weekly pull (attempt %d of 3), waiting", try); Sys.sleep(30 * try)
+  }
+  NULL
+}
+failed <- character()
 for (y in unique(substr(weeks, 1, 4))) {
   wk <- weeks[substr(weeks, 1, 4) == y]
   f <- sprintf("data/raw/weekly/w_%s.rds", y)
   if (file.exists(f) && !(refresh && any(wk %in% recent))) next
   t0 <- Sys.time()
-  dt <- rbindlist(lapply(chunk(des, 25), function(ch)
-    d2_analytics(c(paste0("dx:", paste(ch, collapse = ";")), paste0("pe:", paste(wk, collapse = ";")), ou_sc))))
-  rr <- d2_analytics(c(paste0("dx:C4oUitImBPK.REPORTING_RATE;C4oUitImBPK.ACTUAL_REPORTS;C4oUitImBPK.EXPECTED_REPORTS"),
-                       paste0("pe:", paste(wk, collapse = ";")), ou_sc))
-  saveRDS(list(values = dt, reporting = rr), f, compress = "xz")
-  log_msg("weekly %s: %s values, %s reporting rows in %.0fs", y, format(nrow(dt), big.mark = ","),
-          format(nrow(rr), big.mark = ","), as.numeric(Sys.time() - t0, units = "secs"))
+  res <- pull_year(wk)
+  if (is.null(res)) { failed <- c(failed, y); next }
+  saveRDS(res, f, compress = "xz")
+  pe_ <- unique(res$values$pe); last <- pe_[which.max(as.integer(sub("W.*", "", pe_)) * 100L + as.integer(sub(".*W", "", pe_)))]
+  log_msg("weekly %s: %s values, %s reporting rows, latest week %s, in %.0fs", y, format(nrow(res$values), big.mark = ","),
+          format(nrow(res$reporting), big.mark = ","), last, as.numeric(Sys.time() - t0, units = "secs"))
 }
+if (length(failed)) stop("Weekly pull returned no data for ", paste(failed, collapse = ", "), "; the existing files were kept")
+# the newest week with data must be recent (reports arrive with a lag of up to about 3 weeks)
+pes <- unique(unlist(lapply(list.files("data/raw/weekly", full.names = TRUE), function(p) readRDS(p)$values$pe)))
+latest <- pes[which.max(as.integer(sub("W.*", "", pes)) * 100L + as.integer(sub(".*W", "", pes)))]
+lw <- as.integer(sub(".*W", "", latest)); ly <- as.integer(sub("W.*", "", latest))
+jan4 <- as.Date(sprintf("%d-01-04", ly)); wk1 <- jan4 - (as.integer(format(jan4, "%u")) - 1L)   # Monday of ISO week 1
+age_wk <- as.numeric(Sys.Date() - (wk1 + 7 * (lw - 1))) / 7
+log_msg("newest weekly data: %s (%.0f weeks ago)", latest, age_wk)
+if (age_wk > 5) stop("Weekly data stop at ", latest, ": the newest week is more than 5 weeks old")
 log_msg("weekly extract complete")
