@@ -2700,7 +2700,7 @@
       "checksum": "10ddc86e380eae576b6a7d9ffb7e5326"
     },
     "app.R": {
-      "checksum": "455fca73d5eccce1a1598948b2a575d3"
+      "checksum": "d8d248c702ab8d2b1fd71c12aa660d8b"
     },
     "data_version.txt": {
       "checksum": "04b193a33e104e9d61d21caeefa2806b"
@@ -2727,7 +2727,7 @@
       "checksum": "1b01c7cd9fb375bd1fb395b3dfd31450"
     },
     "www/styles.css": {
-      "checksum": "6259ac6fe1f119aeb799a97695a7e485"
+      "checksum": "efb2664941807740d5bb192c79080934"
     },
     "R/mod_xai.R": {
       "checksum": "c11214adf714b83b739d123a0732ad8b"
@@ -2758,6 +2758,9 @@
     },
     "www/bhf-story.js": {
       "checksum": "20ec1fc4e102822d957a830479fd424f"
+    },
+    "www/bhf-analytics.js": {
+      "checksum": "c5446861346af4c3f9a94c05fcca0710"
     },
     "www/banner/banner_01.jpg": {
       "checksum": "aa8ac81cae84ec7323d8f8edc9873dea"

@@ -580,3 +580,5 @@ a.df-theme:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0, 0
 .df-theme-icon { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 10px; background: var(--th); flex: none; }
 .df-theme-n { font-weight: 750; font-size: .84rem; color: #2b2a36; line-height: 1.2; } .df-theme-c { font-size: .7rem; color: var(--muted); }
 .st-nums-7 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+
+.site-footer-note { margin-top: .35rem; font-size: .78rem; color: #6a6879; }
