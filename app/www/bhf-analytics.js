@@ -3,7 +3,7 @@
 // the GoatCounter address is set below, and never runs on localhost or when the browser sends
 // "Do Not Track".
 (function () {
-  var ENDPOINT = "";   // e.g. "https://busogahealth.goatcounter.com/count"
+  var ENDPOINT = "https://busogahealth.goatcounter.com/count";
   if (!ENDPOINT) return;
   var h = location.hostname;
   if (h === "localhost" || h === "127.0.0.1" || h.slice(-5) === ".test") return;
